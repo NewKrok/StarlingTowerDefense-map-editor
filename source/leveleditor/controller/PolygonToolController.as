@@ -9,23 +9,22 @@ package leveleditor.controller
 
 	import starlingtowerdefense.utils.BrushPattern;
 
-	public class RouteToolController
+	public class PolygonToolController
 	{
 		private const MIN_DISTANCE:Number = 100;
 
-		protected var _routeNodePoints:Vector.<Vector.<NodeView>> = new Vector.<Vector.<NodeView>>();
-		protected var _routeContainer:Vector.<Sprite> = new <Sprite>[];
+		protected var _polygonNodePoints:Vector.<Vector.<NodeView>> = new Vector.<Vector.<NodeView>>();
+		protected var _polygonContainer:Vector.<Sprite> = new <Sprite>[];
 
 		protected var _editorWorld:EditorWorld;
 		protected var _elementContainer:Sprite;
 		protected var _draggedNode:NodeView;
 
 		protected var _isActivated:Boolean = false;
-		protected var _isNodeDragged:Boolean = false;
 
 		private var _lastAddedNodeTime:Number = 0;
 
-		public function RouteToolController( editorWorld:EditorWorld, elementContainer:Sprite )
+		public function PolygonToolController( editorWorld:EditorWorld, elementContainer:Sprite )
 		{
 			this._editorWorld = editorWorld;
 			this._elementContainer = elementContainer;
@@ -35,20 +34,22 @@ package leveleditor.controller
 		{
 			this._isActivated = true;
 
-			this._editorWorld.addEventListener( MouseEvent.CLICK, this.addRouteRequest );
+			this._editorWorld.addEventListener( MouseEvent.CLICK, this.addPolygonRequest );
 			this._editorWorld.addEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
-			this._elementContainer.addEventListener( MouseEvent.MOUSE_DOWN, this.onRouteMouseDown );
 			this._editorWorld.stage.addEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
+
+			this._elementContainer.addEventListener( MouseEvent.MOUSE_DOWN, this.onRouteMouseDown );
 		}
 
 		public function deactivate():void
 		{
 			this._isActivated = false;
 
-			this._editorWorld.removeEventListener( MouseEvent.CLICK, this.addRouteRequest );
+			this._editorWorld.removeEventListener( MouseEvent.CLICK, this.addPolygonRequest );
 			this._editorWorld.removeEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
-			this._elementContainer.removeEventListener( MouseEvent.MOUSE_DOWN, this.onRouteMouseDown );
 			this._editorWorld.stage.removeEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
+
+			this._elementContainer.removeEventListener( MouseEvent.MOUSE_DOWN, this.onRouteMouseDown );
 		}
 
 		protected function onRouteMouseMove( e:MouseEvent ):void
@@ -77,7 +78,7 @@ package leveleditor.controller
 				( this._draggedNode as Sprite ).stopDrag();
 				this._draggedNode = null;
 
-				this.calculateRouteNodes();
+				this.calculatePolygonNodes();
 
 				this.draw();
 
@@ -87,11 +88,11 @@ package leveleditor.controller
 			this._editorWorld.blockWorldDrag = false;
 		}
 
-		private function calculateRouteNodes():void
+		private function calculatePolygonNodes():void
 		{
-			for( var i:int = 0; i < this._routeNodePoints.length; i++ )
+			for( var i:int = 0; i < this._polygonNodePoints.length; i++ )
 			{
-				var route:Vector.<NodeView> = this._routeNodePoints[ i ];
+				var route:Vector.<NodeView> = this._polygonNodePoints[ i ];
 
 				for( var j:int = 0; j < route.length; j++ )
 				{
@@ -126,7 +127,7 @@ package leveleditor.controller
 								route[ j ].y + MIN_DISTANCE * Math.sin( angle )
 						);
 
-						this._routeNodePoints[ i ] = this.addNodeView( route, this._routeContainer[ i ], newPoint, index );
+						this._polygonNodePoints[ i ] = this.addNodeView( route, this._polygonContainer[ i ], newPoint, index );
 
 						if( index == j - 1 )
 						{
@@ -164,26 +165,27 @@ package leveleditor.controller
 								route[ j ].y - MIN_DISTANCE * Math.sin( angle )
 						);
 
-						this._routeNodePoints[ i ] = this.addNodeView( route, this._routeContainer[ i ], newPoint, index );
+						this._polygonNodePoints[ i ] = this.addNodeView( route, this._polygonContainer[ i ], newPoint, index );
 					}
 
-					route = this._routeNodePoints[ i ];
+					route = this._polygonNodePoints[ i ];
 				}
 			}
 		}
 
-		protected function addRouteRequest( e:MouseEvent ):void
+		protected function addPolygonRequest( e:MouseEvent ):void
 		{
-			if( this._routeNodePoints.length < 1 && !this._editorWorld.isWorldDragged() && !this._draggedNode && new Date().time - this._lastAddedNodeTime > 1000 )
+			// Currently limited for just 1 polygon
+			if( this._polygonNodePoints.length < 1 && !this._editorWorld.isWorldDragged() && !this._draggedNode && new Date().time - this._lastAddedNodeTime > 1000 )
 			{
-				this.addNewRoute( _editorWorld.mouseX, _editorWorld.mouseY );
+				this.addNewPolygon( _editorWorld.mouseX, _editorWorld.mouseY );
 				this.draw();
 			}
 		}
 
-		protected function addNewRoute( x:Number, y:Number ):void
+		protected function addNewPolygon( x:Number, y:Number ):void
 		{
-			var newRoute:Vector.<Point> = new <Point>[
+			var newPolygon:Vector.<Point> = new <Point>[
 				new Point( x - this.MIN_DISTANCE / 2, y - this.MIN_DISTANCE / 2 ),
 				new Point( x + this.MIN_DISTANCE / 2, y - this.MIN_DISTANCE / 2 ),
 				new Point( x + this.MIN_DISTANCE / 2, y + this.MIN_DISTANCE / 2 ),
@@ -192,11 +194,11 @@ package leveleditor.controller
 
 			var container:Sprite = new Sprite();
 			this._elementContainer.addChild( container );
-			this._routeContainer.push( container );
+			this._polygonContainer.push( container );
 
-			this._routeNodePoints.push( new Vector.<NodeView> );
+			this._polygonNodePoints.push( new Vector.<NodeView> );
 
-			this.addNodeViews( this._routeNodePoints[ this._routeNodePoints.length - 1 ], container, newRoute );
+			this.addNodeViews( this._polygonNodePoints[ this._polygonNodePoints.length - 1 ], container, newPolygon );
 		}
 
 		private function addNodeViews( target:Vector.<NodeView>, container:Sprite, points:Vector.<Point> ):void
@@ -239,64 +241,65 @@ package leveleditor.controller
 
 		private function draw():void
 		{
-			for( var i:int = 0; i < this._routeNodePoints.length; i++ )
+			for( var i:int = 0; i < this._polygonNodePoints.length; i++ )
 			{
 				var points:Vector.<Point> = new <Point>[];
 
-				this._routeContainer[ i ].graphics.clear();
-				this._routeContainer[ i ].graphics.lineStyle( 1 );
-				this._routeContainer[ i ].graphics.beginFill( 0, .1 );
+				this._polygonContainer[ i ].graphics.clear();
+				this._polygonContainer[ i ].graphics.lineStyle( 1 );
+				this._polygonContainer[ i ].graphics.beginFill( 0, .1 );
 
-				var route:Vector.<NodeView> = this._routeNodePoints[ i ];
-				this._routeContainer[ i ].graphics.moveTo( route[ 0 ].x, route[ 0 ].y );
-				points.push( new Point( route[ 0 ].x / 2, route[ 0 ].y / 2 ) );
+				var polygon:Vector.<NodeView> = this._polygonNodePoints[ i ];
+				this._polygonContainer[ i ].graphics.moveTo( polygon[ 0 ].x, polygon[ 0 ].y );
+				points.push( new Point( polygon[ 0 ].x / 2, polygon[ 0 ].y / 2 ) );
 
-				for( var j:int = 1; j < route.length; j++ )
+				for( var j:int = 1; j < polygon.length; j++ )
 				{
-					this._routeContainer[ i ].graphics.lineTo( route[ j ].x, route[ j ].y );
-					points.push( new Point( route[ j - 1 ].x / 2, route[ j - 1 ].y / 2 ) );
-					points.push( new Point( route[ j ].x / 2, route[ j ].y / 2 ) );
+					this._polygonContainer[ i ].graphics.lineTo( polygon[ j ].x, polygon[ j ].y );
+					points.push( new Point( polygon[ j - 1 ].x / 2, polygon[ j - 1 ].y / 2 ) );
+					points.push( new Point( polygon[ j ].x / 2, polygon[ j ].y / 2 ) );
 				}
 
-				this._routeContainer[ i ].graphics.lineTo( route[ 0 ].x, route[ 0 ].y );
-				points.push( new Point( route[ j - 1 ].x / 2, route[ j - 1 ].y / 2 ) );
-				points.push( new Point( route[ 0 ].x / 2, route[ 0 ].y / 2 ) );
+				this._polygonContainer[ i ].graphics.lineTo( polygon[ 0 ].x, polygon[ 0 ].y );
+				points.push( new Point( polygon[ j - 1 ].x / 2, polygon[ j - 1 ].y / 2 ) );
+				points.push( new Point( polygon[ 0 ].x / 2, polygon[ 0 ].y / 2 ) );
 
-				this._routeContainer[ i ].graphics.endFill();
+				this._polygonContainer[ i ].graphics.endFill();
 
-				if ( !(this._routeContainer[ i ].getChildAt( 0 ) is NodeView ) )
+				if ( !(this._polygonContainer[ i ].getChildAt( 0 ) is NodeView ) )
 				{
-					this._routeContainer[ i ].removeChildAt( 0 );
+					this._polygonContainer[ i ].removeChildAt( 0 );
 				}
 
-				this._routeContainer[ i ].addChildAt( this.createIngameGraphics( points ), 0 );
+				this._polygonContainer[ i ].addChildAt( this.createIngameGraphics( points ), 0 );
 			}
 		}
 
 		private function createIngameGraphics( points:Vector.<Point> ):DisplayObject
 		{
-			var ingameGraphics:Sprite = new BrushPattern( points, new terrain_1, new terrain_1_content, 72, 19 );
+			// Temporary constants
+			var ingameGraphics:Sprite = new BrushPattern( points, new terrain_1, new terrain_0_content, 30, 24 );
 
 			return ingameGraphics;
 		}
 
-		public function loadRoutes( routes:Array ):void
+		public function loadPolygons( polygons:Array ):void
 		{
-			for( var i:int = 0; i < routes.length; i++ )
+			for( var i:int = 0; i < polygons.length; i++ )
 			{
 			}
 		}
 
-		public function getRoutes():Array
+		public function getPolygons():Array
 		{
-			var routes:Array = [];
+			var polygons:Array = [];
 
-			for( var i:int = 0; i < this._routeNodePoints.length; i++ )
+			for( var i:int = 0; i < this._polygonNodePoints.length; i++ )
 			{
 
 			}
 
-			return routes;
+			return polygons;
 		}
 	}
 }

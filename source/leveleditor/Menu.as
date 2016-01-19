@@ -20,7 +20,7 @@ package leveleditor
 		public var _zoomInButton:SimpleButton;
 		public var _zoomOutButton:SimpleButton;
 		public var _selectionToolButton:SimpleButton;
-		public var _addNodeToolButton:SimpleButton;
+		public var _polygonToolButton:SimpleButton;
 		
 		public function Menu()
 		{
@@ -67,7 +67,7 @@ package leveleditor
 			_zoomInButton.addEventListener( MouseEvent.CLICK, onZoomInRequestHandler );
 			_zoomOutButton.addEventListener( MouseEvent.CLICK, onZoomOutRequestHandler );
 			_selectionToolButton.addEventListener( MouseEvent.CLICK, onSelectNodeRequestHandler );
-			_addNodeToolButton.addEventListener( MouseEvent.CLICK, onRouteToolRequestHandler );
+			_polygonToolButton.addEventListener( MouseEvent.CLICK, onPolygonToolRequestHandler );
 		}
 
 		protected function addCharListeners( ):void
@@ -77,7 +77,7 @@ package leveleditor
 			KeyboardOperator.addCharsListener( new KeyboardSetting( 'I', onZoomInRequestHandler ) );
 			KeyboardOperator.addCharsListener( new KeyboardSetting( 'O', onZoomOutRequestHandler ) );
 			KeyboardOperator.addCharsListener( new KeyboardSetting( 'L', onSelectNodeRequestHandler ) );
-			KeyboardOperator.addCharsListener( new KeyboardSetting( 'R', onRouteToolRequestHandler ) );
+			KeyboardOperator.addCharsListener( new KeyboardSetting( 'P', onPolygonToolRequestHandler ) );
 		}
 		
 		protected function onMoveButtonMouseDownHandler( e:MouseEvent ):void
@@ -118,11 +118,11 @@ package leveleditor
 			dispatchEvent( new MenuEvent( MenuEvent.SET_CONTROL_TO_SELECT ) );
 		}
 		
-		protected function onRouteToolRequestHandler( e:MouseEvent = null ):void
+		protected function onPolygonToolRequestHandler( e:MouseEvent = null ):void
 		{
-			updateControllerButtonsView( _addNodeToolButton );
+			updateControllerButtonsView( _polygonToolButton );
 			
-			dispatchEvent( new MenuEvent( MenuEvent.SET_CONTROL_TO_ADD ) );
+			dispatchEvent( new MenuEvent( MenuEvent.SET_CONTROL_TO_POLYGON ) );
 		}
 
 		protected function onZoomInRequestHandler( e:MouseEvent = null ):void
@@ -138,7 +138,7 @@ package leveleditor
 		protected function updateControllerButtonsView( lastCalledControllerButton:SimpleButton ):void
 		{
 			_selectionToolButton.alpha = lastCalledControllerButton == _selectionToolButton ? .5 : 1;
-			_addNodeToolButton.alpha = lastCalledControllerButton == _addNodeToolButton ? .5 : 1;
+			_polygonToolButton.alpha = lastCalledControllerButton == _polygonToolButton ? .5 : 1;
 		}
 		
 		override protected function stageResized( ):void

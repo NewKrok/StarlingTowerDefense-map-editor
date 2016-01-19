@@ -74,7 +74,7 @@ package leveleditor
 
 		private function addCharListeners( ):void
 		{
-			KeyboardOperator.addCharsListener( new KeyboardSetting( 'Y', this.openCrateLibrary ) );
+			KeyboardOperator.addCharsListener( new KeyboardSetting( 'B', this.openCrateLibrary ) );
 		}
 
 		private function onMoveButtonMouseDownHandler( e:MouseEvent ):void

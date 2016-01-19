@@ -7,7 +7,7 @@
 	import flash.text.TextFormat;
 
 	import leveleditor.assets.library.LibraryElementVO;
-	import leveleditor.controller.RouteToolController;
+	import leveleditor.controller.PolygonToolController;
 
 	import leveleditor.data.LevelDataVO;
 	import leveleditor.events.EditorLibraryEvent;
@@ -18,10 +18,10 @@
 		protected const DEFAULT_WORLD_SIZE:Point = new Point( 1600, 1600 );
 
 		public static const CONTROL_TYPE_SELECT:String = 'EditorWorld.CONTROL_TYPE_SELECT';
-		public static const CONTROL_TYPE_ROUTE:String = 'EditorWorld.CONTROL_TYPE_ROUTE';
+		public static const CONTROL_TYPE_POLYGON:String = 'EditorWorld.CONTROL_TYPE_POLYGON';
 
 		protected var _background:Sprite;
-		protected var _routeContainer:Sprite;
+		protected var _polygonContainer:Sprite;
 		protected var _markerContainer:Sprite;
 		protected var _libraryElementContainer:Sprite;
 		protected var _graphicsMarkContainer:Sprite;
@@ -35,7 +35,7 @@
 
 		protected var _blockWorldDrag:Boolean = false;
 
-		protected var _routeToolController:RouteToolController;
+		protected var _polygonToolController:PolygonToolController;
 
 		public function EditorWorld()
 		{
@@ -44,7 +44,7 @@
 		override protected function inited():void
 		{
 			addChild( _background = new Sprite );
-			addChild( _routeContainer = new Sprite );
+			addChild( _polygonContainer = new Sprite );
 			addChild( _markerContainer = new Sprite );
 			addChild( _libraryElementContainer = new Sprite );
 			addChild( _graphicsMarkContainer = new Sprite );
@@ -59,7 +59,7 @@
 
 		protected function initControllers():void
 		{
-			this._routeToolController = new RouteToolController( this, this._routeContainer );
+			this._polygonToolController = new PolygonToolController( this, this._polygonContainer );
 		}
 
 		protected function onMouseDownHandler( e:MouseEvent ):void
@@ -191,7 +191,7 @@
 
 			this.deactivateLibraryElements();
 
-			this._routeToolController.deactivate();
+			this._polygonToolController.deactivate();
 
 			this.removeControllerListeners();
 
@@ -203,8 +203,8 @@
 					this.activateLibraryElements();
 					break;
 
-				case CONTROL_TYPE_ROUTE:
-					this._routeToolController.activate();
+				case CONTROL_TYPE_POLYGON:
+					this._polygonToolController.activate();
 					break;
 			}
 		}

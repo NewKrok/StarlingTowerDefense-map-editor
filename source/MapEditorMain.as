@@ -56,7 +56,7 @@
 			_menu.addEventListener( MenuEvent.ZOOM_IN_REQUEST, zoomInHandler );
 			_menu.addEventListener( MenuEvent.ZOOM_OUT_REQUEST, zoomOutHandler );
 			_menu.addEventListener( MenuEvent.SET_CONTROL_TO_SELECT, onSetControlToSelectHandler );
-			_menu.addEventListener( MenuEvent.SET_CONTROL_TO_ADD, onSetControlToAddHandler );
+			_menu.addEventListener( MenuEvent.SET_CONTROL_TO_POLYGON, onSetControlToAddHandler );
 			addChild( _menu );
 
 			this._editorLibrary = new EditorLibrary();
@@ -131,7 +131,7 @@
 
 		private function onSetControlToAddHandler( e:MenuEvent ):void
 		{
-			_editorWorld.setControl( EditorWorld.CONTROL_TYPE_ROUTE );
+			_editorWorld.setControl( EditorWorld.CONTROL_TYPE_POLYGON );
 		}
 
 		private function onEditorLibraryOpenHandler( e:EditorLibraryEvent ):void
