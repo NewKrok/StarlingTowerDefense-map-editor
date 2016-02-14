@@ -54,6 +54,7 @@ package leveleditor
 			var data:Object = {};
 
 			data.libraryElements = levelData.libraryElements;
+			data.polygons = levelData.polygons;
 
 			return JSON.stringify( data );
 		}

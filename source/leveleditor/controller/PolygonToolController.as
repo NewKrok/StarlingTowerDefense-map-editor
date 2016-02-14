@@ -178,12 +178,12 @@ package leveleditor.controller
 			// Currently limited for just 1 polygon
 			if( this._polygonNodePoints.length < 1 && !this._editorWorld.isWorldDragged() && !this._draggedNode && new Date().time - this._lastAddedNodeTime > 1000 )
 			{
-				this.addNewPolygon( _editorWorld.mouseX, _editorWorld.mouseY );
+				this.addNewPolygonToPoint( _editorWorld.mouseX, _editorWorld.mouseY );
 				this.draw();
 			}
 		}
 
-		protected function addNewPolygon( x:Number, y:Number ):void
+		protected function addNewPolygonToPoint( x:Number, y:Number ):void
 		{
 			var newPolygon:Vector.<Point> = new <Point>[
 				new Point( x - this.MIN_DISTANCE / 2, y - this.MIN_DISTANCE / 2 ),
@@ -192,13 +192,18 @@ package leveleditor.controller
 				new Point( x - this.MIN_DISTANCE / 2, y + this.MIN_DISTANCE / 2 )
 			];
 
+			this.addNewPolygon( newPolygon );
+		}
+
+		private function addNewPolygon( polygon:Vector.<Point> ):void
+		{
 			var container:Sprite = new Sprite();
 			this._elementContainer.addChild( container );
 			this._polygonContainer.push( container );
 
 			this._polygonNodePoints.push( new Vector.<NodeView> );
 
-			this.addNodeViews( this._polygonNodePoints[ this._polygonNodePoints.length - 1 ], container, newPolygon );
+			this.addNodeViews( this._polygonNodePoints[ this._polygonNodePoints.length - 1 ], container, polygon );
 		}
 
 		private function addNodeViews( target:Vector.<NodeView>, container:Sprite, points:Vector.<Point> ):void
@@ -266,7 +271,7 @@ package leveleditor.controller
 
 				this._polygonContainer[ i ].graphics.endFill();
 
-				if ( !(this._polygonContainer[ i ].getChildAt( 0 ) is NodeView ) )
+				if( !(this._polygonContainer[ i ].getChildAt( 0 ) is NodeView ) )
 				{
 					this._polygonContainer[ i ].removeChildAt( 0 );
 				}
@@ -278,7 +283,7 @@ package leveleditor.controller
 		private function createIngameGraphics( points:Vector.<Point> ):DisplayObject
 		{
 			// Temporary constants
-			var ingameGraphics:Sprite = new BrushPattern( points, new terrain_1, new terrain_0_content, 30, 24 );
+			var ingameGraphics:Sprite = new BrushPattern( points, new terrain_1, new terrain_0_content, 30, 40 );
 
 			return ingameGraphics;
 		}
@@ -287,7 +292,17 @@ package leveleditor.controller
 		{
 			for( var i:int = 0; i < polygons.length; i++ )
 			{
+				var newPolygon:Vector.<Point> = new <Point>[];
+
+				for( var j:int = 0; j < polygons[i].length; j++ )
+				{
+					newPolygon.push( new Point( polygons[i][j].x, polygons[i][j].y ) );
+				}
+
+				this.addNewPolygon( newPolygon );
 			}
+
+			this.draw();
 		}
 
 		public function getPolygons():Array
@@ -296,7 +311,17 @@ package leveleditor.controller
 
 			for( var i:int = 0; i < this._polygonNodePoints.length; i++ )
 			{
+				var polygonElements:Array = [];
 
+				for( var j:int = 0; j < this._polygonNodePoints[ i ].length; j++ )
+				{
+					polygonElements.push( {
+						x: this._polygonNodePoints[ i ][ j ].x,
+						y: this._polygonNodePoints[ i ][ j ].y
+					} );
+				}
+
+				polygons.push( polygonElements );
 			}
 
 			return polygons;

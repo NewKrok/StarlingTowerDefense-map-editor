@@ -63,6 +63,7 @@ package leveleditor
 			var levelData:LevelDataVO = new LevelDataVO;
 
 			levelData.libraryElements = data.libraryElements;
+			levelData.polygons = data.polygons;
 
 			return levelData;
 		}

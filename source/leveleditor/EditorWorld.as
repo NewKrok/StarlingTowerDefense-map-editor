@@ -267,6 +267,11 @@
 
 		public function loadLevel( levelData:LevelDataVO ):void
 		{
+			if( levelData.polygons )
+			{
+				this._polygonToolController.loadPolygons( levelData.polygons );
+			}
+
 			if( levelData.libraryElements )
 			{
 				this.loadLibraryElements( levelData.libraryElements );
@@ -291,6 +296,7 @@
 		{
 			var levelData:LevelDataVO = new LevelDataVO();
 
+			levelData.polygons = this._polygonToolController.getPolygons();
 			levelData.libraryElements = this.createLibraryElementExportData();
 
 			return levelData;
