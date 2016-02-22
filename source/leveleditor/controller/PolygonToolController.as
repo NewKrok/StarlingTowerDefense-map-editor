@@ -7,6 +7,8 @@ package leveleditor.controller
 
 	import leveleditor.EditorWorld;
 
+	import net.fpp.asset.bitmap.StaticBitmapAssetManager;
+
 	import starlingtowerdefense.utils.BrushPattern;
 
 	public class PolygonToolController
@@ -283,7 +285,13 @@ package leveleditor.controller
 		private function createIngameGraphics( points:Vector.<Point> ):DisplayObject
 		{
 			// Temporary constants
-			var ingameGraphics:Sprite = new BrushPattern( points, new terrain_1, new terrain_0_content, 30, 40 );
+			var ingameGraphics:Sprite = new BrushPattern(
+					points,
+					StaticBitmapAssetManager.instance.getBitmapData( 'terrain_0_border' ),
+					StaticBitmapAssetManager.instance.getBitmapData( 'terrain_0_content' ),
+					30 / 2,
+					40 / 2
+			);
 
 			return ingameGraphics;
 		}

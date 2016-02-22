@@ -17,9 +17,13 @@
 	import leveleditor.events.ImportEvent;
 	import leveleditor.events.MenuEvent;
 
+	import net.fpp.asset.bitmap.StaticBitmapAssetManager;
+
 	import net.fpp.static.FPPContextMenu;
 
 	import rv2.keyboard.KeyboardOperator;
+
+	import starlingtowerdefense.assets.TerrainTextures;
 
 	public class MapEditorMain extends Sprite
 	{
@@ -35,6 +39,9 @@
 		{
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
+
+			StaticBitmapAssetManager.scaleFactor = 2;
+			StaticBitmapAssetManager.instance.loadFromJSONAtlas( TerrainTextures.AtlasImage, TerrainTextures.AtlasDescription );
 
 			addEventListener( Event.ADDED_TO_STAGE, inited );
 
