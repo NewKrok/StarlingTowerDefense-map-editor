@@ -25,6 +25,7 @@ package leveleditor.controller
 		protected var _isActivated:Boolean = false;
 
 		private var _lastAddedNodeTime:Number = 0;
+		private var _polygonIndex:int = 0;
 
 		public function PolygonToolController( editorWorld:EditorWorld, elementContainer:Sprite )
 		{
@@ -203,9 +204,29 @@ package leveleditor.controller
 			this._elementContainer.addChild( container );
 			this._polygonContainer.push( container );
 
+			container.buttonMode = true;
+			container.addEventListener( MouseEvent.CLICK, onPolygonClickHandler );
+
 			this._polygonNodePoints.push( new Vector.<NodeView> );
 
 			this.addNodeViews( this._polygonNodePoints[ this._polygonNodePoints.length - 1 ], container, polygon );
+		}
+
+		private function onPolygonClickHandler( e:MouseEvent ):void
+		{
+			if ( e.target is NodeView )
+			{
+				return;
+			}
+
+			this._polygonIndex++;
+
+			if ( this._polygonIndex > 1 )
+			{
+				this._polygonIndex = 0;
+			}
+
+			this.draw();
 		}
 
 		private function addNodeViews( target:Vector.<NodeView>, container:Sprite, points:Vector.<Point> ):void
@@ -287,8 +308,8 @@ package leveleditor.controller
 			// Temporary constants
 			var ingameGraphics:Sprite = new BrushPattern(
 					points,
-					StaticBitmapAssetManager.instance.getBitmapData( 'terrain_0_border' ),
-					StaticBitmapAssetManager.instance.getBitmapData( 'terrain_0_content' ),
+					StaticBitmapAssetManager.instance.getBitmapData( 'terrain_' + this._polygonIndex + '_border' ),
+					StaticBitmapAssetManager.instance.getBitmapData( 'terrain_' + this._polygonIndex + '_content' ),
 					30 / 2,
 					40 / 2
 			);
