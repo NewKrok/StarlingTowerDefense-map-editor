@@ -1,29 +1,26 @@
 ﻿package
 {
+	import assets.TerrainTextures;
+
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 
-	import leveleditor.Background;
-	import leveleditor.EditorLibrary;
-	import leveleditor.EditorWorld;
-	import leveleditor.ExportPanel;
-	import leveleditor.ImportPanel;
-	import leveleditor.Menu;
-	import leveleditor.ZoomView;
-	import leveleditor.events.EditorLibraryEvent;
-	import leveleditor.events.EditorWorldEvent;
-	import leveleditor.events.ImportEvent;
-	import leveleditor.events.MenuEvent;
+	import net.fpp.common.bitmap.StaticBitmapAssetManager;
+	import net.fpp.common.static.FPPContextMenu;
 
-	import net.fpp.asset.bitmap.StaticBitmapAssetManager;
-
-	import net.fpp.static.FPPContextMenu;
-
-	import rv2.keyboard.KeyboardOperator;
-
-	import starlingtowerdefense.assets.TerrainTextures;
+	import net.fpp.starlingtdleveleditor.Background;
+	import net.fpp.starlingtdleveleditor.EditorLibrary;
+	import net.fpp.starlingtdleveleditor.EditorWorld;
+	import net.fpp.starlingtdleveleditor.ExportPanel;
+	import net.fpp.starlingtdleveleditor.ImportPanel;
+	import net.fpp.starlingtdleveleditor.Menu;
+	import net.fpp.starlingtdleveleditor.ZoomView;
+	import net.fpp.starlingtdleveleditor.events.EditorLibraryEvent;
+	import net.fpp.starlingtdleveleditor.events.EditorWorldEvent;
+	import net.fpp.starlingtdleveleditor.events.ImportEvent;
+	import net.fpp.starlingtdleveleditor.events.MenuEvent;
 
 	public class MapEditorMain extends Sprite
 	{
@@ -51,7 +48,6 @@
 		private function inited( e:Event ):void
 		{
 			removeEventListener( Event.ADDED_TO_STAGE, inited );
-			KeyboardOperator.init( stage );
 
 			addChild( _background = new Background );
 			addChild( _editorWorld = new EditorWorld );
@@ -84,7 +80,6 @@
 		private function onImportRequestHandler( e:MenuEvent ):void
 		{
 			_importPanel.show( );
-			KeyboardOperator.pause( );
 		}
 
 		private function onEditorWorldResize( e:EditorWorldEvent ):void
@@ -106,19 +101,16 @@
 		private function onCloseImportPanelHandler( e:MenuEvent ):void
 		{
 			_importPanel.hide( );
-			KeyboardOperator.unPause( );
 		}
 
 		private function onExportRequestHandler( e:MenuEvent ):void
 		{
 			_exportPanel.show( _editorWorld.getLevelData( ) );
-			KeyboardOperator.pause( );
 		}
 
 		private function onCloseExportPanelHandler( e:MenuEvent ):void
 		{
 			_exportPanel.hide( );
-			KeyboardOperator.unPause( );
 		}
 
 		private function zoomInHandler( e:MenuEvent ):void
