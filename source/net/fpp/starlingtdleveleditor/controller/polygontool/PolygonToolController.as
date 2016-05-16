@@ -130,7 +130,7 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 			for( var i:int = 0; i < this._polygonViews.length; i++ )
 			{
 				var route:Vector.<PolygonNodeView> = this._polygonViews[ i ].polygonNodeViews;
-
+				
 				for( var j:int = 0; j < route.length; j++ )
 				{
 					var distance:Number;
@@ -144,7 +144,7 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 					{
 						xLength = route[ j ].x - route[ route.length - 1 ].x;
 						yLength = route[ j ].y - route[ route.length - 1 ].y;
-						index = route.length - 1;
+						index = route.length;
 					}
 					else
 					{
@@ -157,7 +157,7 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 
 					if( distance > MIN_DISTANCE * 2 )
 					{
-						angle = Math.atan2( yLength, xLength );
+						angle = Math.atan2( yLength, xLength ) + Math.PI;
 
 						newPoint = new Point(
 								route[ j ].x + MIN_DISTANCE * Math.cos( angle ),
@@ -201,7 +201,6 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 								route[ j ].x - MIN_DISTANCE * Math.cos( angle ),
 								route[ j ].y - MIN_DISTANCE * Math.sin( angle )
 						);
-
 						this._polygonViews[ i ].polygonNodeViews = this.addPolygonNodeView( route, this._polygonViews[ i ], newPoint, index );
 					}
 
@@ -281,7 +280,7 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 			polygonNodeView.x = point.x;
 			polygonNodeView.y = point.y;
 
-			if( index == -1 )
+			if( index == -1 || index == target.length )
 			{
 				target.push( polygonNodeView );
 			}
