@@ -11,8 +11,11 @@ package net.fpp.starlingtdleveleditor.controller.polygontool.event
 	{
 		public static const DELETE_REQUEST:String = 'PolygonToolMenuEvent.DELETE_REQUEST';
 		public static const CHANGE_TERRAIN_TEXTURE_REQUEST:String = 'PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST';
+		public static const SEND_BACKWARD:String = 'PolygonToolMenuEvent.SEND_BACKWARD';
+		public static const BRING_FORWARD:String = 'PolygonToolMenuEvent.BRING_FORWARD';
+		public static const CLOSE_REQUEST:String = 'PolygonToolMenuEvent.CLOSE_REQUEST';
 
-			public var terrainTextureVO:TerrainTextureVO;
+		public var terrainTextureVO:TerrainTextureVO;
 
 		public function PolygonToolMenuEvent( type:String, terrainTextureVO:TerrainTextureVO = null )
 		{

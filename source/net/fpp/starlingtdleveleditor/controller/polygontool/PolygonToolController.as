@@ -16,11 +16,12 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 	{
 		private const MIN_DISTANCE:Number = 100;
 
-		protected var _polygonNodePoints:Vector.<Vector.<PolygonNodeView>> = new Vector.<Vector.<PolygonNodeView>>();
-		protected var _polygonContainer:Vector.<Sprite> = new <Sprite>[];
+		protected var _polygonViews:Vector.<PolygonView> = new <PolygonView>[];
 
 		protected var _editorWorld:EditorWorld;
 		protected var _elementContainer:Sprite;
+		protected var _polygonViewContainer:Sprite;
+
 		protected var _draggedNode:PolygonNodeView;
 
 		protected var _polygonToolMenu:PolygonToolMenu;
@@ -29,14 +30,15 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 
 		private var _lastAddedNodeTime:Number = 0;
 		private var _lastSelectedPolygonIndex:int = 0;
-
-		private var _terrainTextureVO:TerrainTextureVO;
+		private var _selectedPolygonView:PolygonView;
 
 		public function PolygonToolController( editorWorld:EditorWorld, elementContainer:Sprite )
 		{
 			this._editorWorld = editorWorld;
 			this._elementContainer = elementContainer;
-			this._terrainTextureVO = TerrainTextureConfig.instance.getTerrainTextureList()[ 0 ];
+
+			this._polygonViewContainer = new Sprite();
+			this._elementContainer.addChild( this._polygonViewContainer );
 
 			this._polygonToolMenu = new PolygonToolMenu();
 		}
@@ -48,7 +50,6 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 			this._editorWorld.addEventListener( MouseEvent.CLICK, this.addPolygonRequest );
 			this._editorWorld.addEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
 			this._editorWorld.stage.addEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
-			this._editorWorld.stage.addEventListener( MouseEvent.MOUSE_DOWN, this.onStageMouseDownHandler );
 
 			this._elementContainer.addEventListener( MouseEvent.MOUSE_DOWN, this.onRouteMouseDown );
 		}
@@ -100,19 +101,35 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 			this._editorWorld.blockWorldDrag = false;
 		}
 
-		private function onStageMouseDownHandler( e:MouseEvent ):void
+		private function isPolygonToolMenuClicked( e:MouseEvent ):Boolean
 		{
-			if( !this._polygonToolMenu.hitTestPoint( e.currentTarget.mouseX, e.currentTarget.mouseY ) )
+			var mouseX:Number = e.currentTarget.mouseX;
+			var mouseY:Number = e.currentTarget.mouseY;
+
+			return this._polygonToolMenu.hitTestPoint( mouseX, mouseY );
+		}
+
+		private function isPolygonViewClicked( e:MouseEvent ):Boolean
+		{
+			var mouseX:Number = e.currentTarget.mouseX;
+			var mouseY:Number = e.currentTarget.mouseY;
+
+			for( var i:int = 0; i < this._polygonViews.length; i++ )
 			{
-				this.closePolygonToolMenu();
+				if( this._polygonViews[ i ].hitTestPoint( mouseX, mouseY, true ) )
+				{
+					return true;
+				}
 			}
+
+			return false;
 		}
 
 		private function calculatePolygonNodes():void
 		{
-			for( var i:int = 0; i < this._polygonNodePoints.length; i++ )
+			for( var i:int = 0; i < this._polygonViews.length; i++ )
 			{
-				var route:Vector.<PolygonNodeView> = this._polygonNodePoints[ i ];
+				var route:Vector.<PolygonNodeView> = this._polygonViews[ i ].polygonNodeViews;
 
 				for( var j:int = 0; j < route.length; j++ )
 				{
@@ -147,7 +164,7 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 								route[ j ].y + MIN_DISTANCE * Math.sin( angle )
 						);
 
-						this._polygonNodePoints[ i ] = this.addPolygonNodeView( route, this._polygonContainer[ i ], newPoint, index );
+						this._polygonViews[ i ].polygonNodeViews = this.addPolygonNodeView( route, this._polygonViews[ i ], newPoint, index );
 
 						if( index == j - 1 )
 						{
@@ -185,21 +202,25 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 								route[ j ].y - MIN_DISTANCE * Math.sin( angle )
 						);
 
-						this._polygonNodePoints[ i ] = this.addPolygonNodeView( route, this._polygonContainer[ i ], newPoint, index );
+						this._polygonViews[ i ].polygonNodeViews = this.addPolygonNodeView( route, this._polygonViews[ i ], newPoint, index );
 					}
 
-					route = this._polygonNodePoints[ i ];
+					route = this._polygonViews[ i ].polygonNodeViews;
 				}
 			}
 		}
 
 		protected function addPolygonRequest( e:MouseEvent ):void
 		{
-			// Currently limited for just 1 polygon
-			if( this._polygonNodePoints.length < 1 && !this._editorWorld.isWorldDragged() && !this._draggedNode && new Date().time - this._lastAddedNodeTime > 1000 )
+			if( !this._polygonToolMenu.parent && !isPolygonToolMenuClicked( e ) && !this.isPolygonViewClicked( e ) && !this._editorWorld.isWorldDragged() && !this._draggedNode && new Date().time - this._lastAddedNodeTime > 1000 )
 			{
 				this.addNewPolygonToPoint( _editorWorld.mouseX, _editorWorld.mouseY );
 				this.draw();
+			}
+
+			if( this._polygonToolMenu.parent && !this.isPolygonToolMenuClicked( e ) )
+			{
+				this.closePolygonToolMenu();
 			}
 		}
 
@@ -217,26 +238,28 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 
 		private function addNewPolygon( polygon:Vector.<Point> ):void
 		{
-			var container:Sprite = new Sprite();
-			this._elementContainer.addChild( container );
-			this._polygonContainer.push( container );
+			var polygonView:PolygonView = new PolygonView( TerrainTextureConfig.instance.getTerrainTextureList()[ 0 ] );
+			polygonView.unmark();
 
-			container.buttonMode = true;
-			container.addEventListener( MouseEvent.CLICK, onPolygonClickHandler );
+			this._polygonViewContainer.addChild( polygonView );
+			this._polygonViews.push( polygonView );
 
-			this._polygonNodePoints.push( new Vector.<PolygonNodeView> );
+			polygonView.addEventListener( MouseEvent.CLICK, onPolygonClickHandler );
 
-			this.addPolygonNodeViews( this._polygonNodePoints[ this._polygonNodePoints.length - 1 ], container, polygon );
+			this.addPolygonNodeViews( polygonView.polygonNodeViews, polygonView, polygon );
 		}
 
 		private function onPolygonClickHandler( e:MouseEvent ):void
 		{
-			if( e.target is PolygonNodeView )
+			if( e.target is PolygonNodeView || this._editorWorld.isWorldDragged() )
 			{
 				return;
 			}
 
-			this._lastSelectedPolygonIndex = 0;
+			this._selectedPolygonView = e.currentTarget as PolygonView;
+			this._selectedPolygonView.mark();
+
+			this._lastSelectedPolygonIndex = this._polygonViewContainer.getChildIndex( this._selectedPolygonView );
 
 			this.openPolygonToolMenu();
 		}
@@ -281,47 +304,47 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 
 		private function draw():void
 		{
-			for( var i:int = 0; i < this._polygonNodePoints.length; i++ )
+			for( var i:int = 0; i < this._polygonViews.length; i++ )
 			{
 				var points:Vector.<Point> = new <Point>[];
 
-				this._polygonContainer[ i ].graphics.clear();
-				this._polygonContainer[ i ].graphics.lineStyle( 1 );
-				this._polygonContainer[ i ].graphics.beginFill( 0, .1 );
+				this._polygonViews[ i ].graphics.clear();
+				this._polygonViews[ i ].graphics.lineStyle( 1 );
+				this._polygonViews[ i ].graphics.beginFill( 0, .1 );
 
-				var polygon:Vector.<PolygonNodeView> = this._polygonNodePoints[ i ];
-				this._polygonContainer[ i ].graphics.moveTo( polygon[ 0 ].x, polygon[ 0 ].y );
+				var polygon:Vector.<PolygonNodeView> = this._polygonViews[ i ].polygonNodeViews;
+				this._polygonViews[ i ].graphics.moveTo( polygon[ 0 ].x, polygon[ 0 ].y );
 				points.push( new Point( polygon[ 0 ].x / 2, polygon[ 0 ].y / 2 ) );
 
 				for( var j:int = 1; j < polygon.length; j++ )
 				{
-					this._polygonContainer[ i ].graphics.lineTo( polygon[ j ].x, polygon[ j ].y );
+					this._polygonViews[ i ].graphics.lineTo( polygon[ j ].x, polygon[ j ].y );
 					points.push( new Point( polygon[ j - 1 ].x / 2, polygon[ j - 1 ].y / 2 ) );
 					points.push( new Point( polygon[ j ].x / 2, polygon[ j ].y / 2 ) );
 				}
 
-				this._polygonContainer[ i ].graphics.lineTo( polygon[ 0 ].x, polygon[ 0 ].y );
+				this._polygonViews[ i ].graphics.lineTo( polygon[ 0 ].x, polygon[ 0 ].y );
 				points.push( new Point( polygon[ j - 1 ].x / 2, polygon[ j - 1 ].y / 2 ) );
 				points.push( new Point( polygon[ 0 ].x / 2, polygon[ 0 ].y / 2 ) );
 
-				this._polygonContainer[ i ].graphics.endFill();
+				this._polygonViews[ i ].graphics.endFill();
 
-				if( !(this._polygonContainer[ i ].getChildAt( 0 ) is PolygonNodeView ) )
+				if( !(this._polygonViews[ i ].getChildAt( 0 ) is PolygonNodeView ) )
 				{
-					this._polygonContainer[ i ].removeChildAt( 0 );
+					this._polygonViews[ i ].removeChildAt( 0 );
 				}
 
-				this._polygonContainer[ i ].addChildAt( this.createIngameGraphics( points ), 0 );
+				this._polygonViews[ i ].addChildAt( this.createIngameGraphics( points, this._polygonViews[ i ].terrainTextureVO ), 0 );
 			}
 		}
 
-		private function createIngameGraphics( points:Vector.<Point> ):DisplayObject
+		private function createIngameGraphics( points:Vector.<Point>, terrainTextureVO:TerrainTextureVO ):DisplayObject
 		{
 			// Temporary constants
 			var ingameGraphics:Sprite = new BrushPattern(
 					points,
-					StaticBitmapAssetManager.instance.getBitmapData( this._terrainTextureVO.borderTextureId ),
-					StaticBitmapAssetManager.instance.getBitmapData( this._terrainTextureVO.contentTextureId ),
+					StaticBitmapAssetManager.instance.getBitmapData( terrainTextureVO.borderTextureId ),
+					StaticBitmapAssetManager.instance.getBitmapData( terrainTextureVO.contentTextureId ),
 					30 / 2,
 					40 / 2
 			);
@@ -350,15 +373,15 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 		{
 			var polygons:Array = [];
 
-			for( var i:int = 0; i < this._polygonNodePoints.length; i++ )
+			for( var i:int = 0; i < this._polygonViews.length; i++ )
 			{
 				var polygonElements:Array = [];
 
-				for( var j:int = 0; j < this._polygonNodePoints[ i ].length; j++ )
+				for( var j:int = 0; j < this._polygonViews[ i ].polygonNodeViews.length; j++ )
 				{
 					polygonElements.push( {
-						x: this._polygonNodePoints[ i ][ j ].x,
-						y: this._polygonNodePoints[ i ][ j ].y
+						x: this._polygonViews[ i ].polygonNodeViews[ j ].x,
+						y: this._polygonViews[ i ].polygonNodeViews[ j ].y
 					} );
 				}
 
@@ -376,6 +399,9 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 			this._polygonToolMenu.y = this._editorWorld.mouseY;
 
 			this._polygonToolMenu.addEventListener( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainTextureChangeRequestHandler );
+			this._polygonToolMenu.addEventListener( PolygonToolMenuEvent.BRING_FORWARD, this.onBringForwardPolyginRequestHandler );
+			this._polygonToolMenu.addEventListener( PolygonToolMenuEvent.SEND_BACKWARD, this.onSendBackwardPolyginRequestHandler );
+			this._polygonToolMenu.addEventListener( PolygonToolMenuEvent.CLOSE_REQUEST, this.onClosePolyginRequestHandler );
 			this._polygonToolMenu.addEventListener( PolygonToolMenuEvent.DELETE_REQUEST, this.onDeletePolyginRequestHandler );
 			this._polygonToolMenu.enable();
 		}
@@ -384,9 +410,14 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 		{
 			if( this._polygonToolMenu.parent )
 			{
+				this._selectedPolygonView.unmark();
+
 				this._editorWorld.removeChild( this._polygonToolMenu );
 
 				this._polygonToolMenu.removeEventListener( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainTextureChangeRequestHandler );
+				this._polygonToolMenu.removeEventListener( PolygonToolMenuEvent.BRING_FORWARD, this.onBringForwardPolyginRequestHandler );
+				this._polygonToolMenu.removeEventListener( PolygonToolMenuEvent.SEND_BACKWARD, this.onSendBackwardPolyginRequestHandler );
+				this._polygonToolMenu.removeEventListener( PolygonToolMenuEvent.CLOSE_REQUEST, this.onClosePolyginRequestHandler );
 				this._polygonToolMenu.removeEventListener( PolygonToolMenuEvent.DELETE_REQUEST, this.onDeletePolyginRequestHandler );
 				this._polygonToolMenu.disable();
 			}
@@ -394,21 +425,56 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 
 		private function onTerrainTextureChangeRequestHandler( e:PolygonToolMenuEvent ):void
 		{
-			this._terrainTextureVO = e.terrainTextureVO;
+			this._polygonViews[ this._lastSelectedPolygonIndex ].terrainTextureVO = e.terrainTextureVO;
 
 			this.draw();
 		}
 
+		private function onBringForwardPolyginRequestHandler( e:PolygonToolMenuEvent ):void
+		{
+			if( this._lastSelectedPolygonIndex < this._polygonViewContainer.numChildren - 1 )
+			{
+				this._polygonViewContainer.swapChildrenAt( this._lastSelectedPolygonIndex, this._lastSelectedPolygonIndex + 1 );
+
+				var savedPolygonView:PolygonView = this._polygonViews[ this._lastSelectedPolygonIndex ];
+				this._polygonViews[ this._lastSelectedPolygonIndex ] = this._polygonViews[ this._lastSelectedPolygonIndex + 1 ];
+				this._polygonViews[ this._lastSelectedPolygonIndex + 1 ] = savedPolygonView;
+
+				this._lastSelectedPolygonIndex++;
+
+				this.draw();
+			}
+		}
+
+		private function onSendBackwardPolyginRequestHandler( e:PolygonToolMenuEvent ):void
+		{
+			if( this._lastSelectedPolygonIndex > 0 )
+			{
+				this._polygonViewContainer.swapChildrenAt( this._lastSelectedPolygonIndex, this._lastSelectedPolygonIndex - 1 );
+
+				var savedPolygonView:PolygonView = this._polygonViews[ this._lastSelectedPolygonIndex ];
+				this._polygonViews[ this._lastSelectedPolygonIndex ] = this._polygonViews[ this._lastSelectedPolygonIndex - 1 ];
+				this._polygonViews[ this._lastSelectedPolygonIndex - 1 ] = savedPolygonView;
+
+				this._lastSelectedPolygonIndex--;
+
+				this.draw();
+			}
+		}
+
+		private function onClosePolyginRequestHandler( e:PolygonToolMenuEvent ):void
+		{
+			this.closePolygonToolMenu();
+		}
+
 		private function onDeletePolyginRequestHandler( e:PolygonToolMenuEvent ):void
 		{
-			this._polygonNodePoints[ this._lastSelectedPolygonIndex ].length = 0;
-			this._polygonNodePoints.splice( this._lastSelectedPolygonIndex, 1 );
+			var polygonView:PolygonView = this._polygonViews[ this._lastSelectedPolygonIndex ];
+			polygonView.dispose();
+			polygonView.removeEventListener( MouseEvent.CLICK, onPolygonClickHandler );
 
-			var polygonContainer:Sprite = this._polygonContainer[ this._lastSelectedPolygonIndex ];
-			polygonContainer.graphics.clear();
-			polygonContainer.removeEventListener( MouseEvent.CLICK, onPolygonClickHandler );
-			this._elementContainer.removeChild( polygonContainer );
-			this._polygonContainer.splice( this._lastSelectedPolygonIndex, 1 );
+			this._polygonViewContainer.removeChild( polygonView );
+			this._polygonViews.splice( this._lastSelectedPolygonIndex, 1 );
 
 			this.closePolygonToolMenu();
 

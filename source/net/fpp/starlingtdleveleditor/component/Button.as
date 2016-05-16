@@ -54,6 +54,7 @@ package net.fpp.starlingtdleveleditor.component
 			this.addChild( this._textField );
 
 			var textFormat:TextFormat = new TextFormat();
+			textFormat.size = 11;
 			textFormat.color = 0xFFFFFF;
 			textFormat.font = 'Verdana';
 
@@ -138,6 +139,9 @@ package net.fpp.starlingtdleveleditor.component
 			this._hitArea.buttonMode = false;
 			this._hitArea.removeEventListener( MouseEvent.MOUSE_OVER, this.mouseOverHandler );
 			this._hitArea.removeEventListener( MouseEvent.MOUSE_OUT, this.mouseOutHandler );
+
+			this._state = this.NORMAL_STATE;
+			this.updateView();
 
 			this.mouseEnabled = false;
 			this.useHandCursor = false;
