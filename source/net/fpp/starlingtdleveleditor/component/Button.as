@@ -28,6 +28,8 @@ package net.fpp.starlingtdleveleditor.component
 		private var _stateViewManifest:Dictionary;
 		private var _textField:TextField;
 
+		public var data:Object;
+
 		public function Button( upSkin:DisplayObject, downSkin:DisplayObject, text:String = '', width:Number = 100, height:Number = 25 )
 		{
 			this._upSkin = upSkin;

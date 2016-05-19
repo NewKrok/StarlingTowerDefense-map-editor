@@ -9,23 +9,24 @@
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
 	import net.fpp.common.static.FPPContextMenu;
-
 	import net.fpp.starlingtdleveleditor.Background;
 	import net.fpp.starlingtdleveleditor.EditorLibrary;
-	import net.fpp.starlingtdleveleditor.EditorWorld;
+	import net.fpp.starlingtdleveleditor.EditorMain;
 	import net.fpp.starlingtdleveleditor.ExportPanel;
-	import net.fpp.starlingtdleveleditor.ImportPanel;
-	import net.fpp.starlingtdleveleditor.Menu;
 	import net.fpp.starlingtdleveleditor.ZoomView;
+	import net.fpp.starlingtdleveleditor.config.ToolConfig;
+	import net.fpp.starlingtdleveleditor.controller.importlevel.ImportPanel;
 	import net.fpp.starlingtdleveleditor.events.EditorLibraryEvent;
 	import net.fpp.starlingtdleveleditor.events.EditorWorldEvent;
 	import net.fpp.starlingtdleveleditor.events.ImportEvent;
 	import net.fpp.starlingtdleveleditor.events.MenuEvent;
+	import net.fpp.starlingtdleveleditor.menu.Menu;
+	import net.fpp.starlingtdleveleditor.vo.ToolConfigVO;
 
 	public class MapEditorMain extends Sprite
 	{
 		private var _background:Background;
-		private var _editorWorld:EditorWorld;
+		private var _editorMain:EditorMain;
 		private var _zoomView:ZoomView;
 		private var _menu:Menu;
 		private var _editorLibrary:EditorLibrary;
@@ -50,24 +51,21 @@
 			removeEventListener( Event.ADDED_TO_STAGE, inited );
 
 			addChild( _background = new Background );
-			addChild( _editorWorld = new EditorWorld );
-			addChild( _zoomView = new ZoomView( ) );
+			addChild( _editorMain = new EditorMain );
+			addChild( _zoomView = new ZoomView() );
 
-			_menu = new Menu;
-			_menu.addEventListener( MenuEvent.IMPORT_REQUEST, onImportRequestHandler );
-			_menu.addEventListener( MenuEvent.EXPORT_REQUEST, onExportRequestHandler );
-			_menu.addEventListener( MenuEvent.ZOOM_IN_REQUEST, zoomInHandler );
-			_menu.addEventListener( MenuEvent.ZOOM_OUT_REQUEST, zoomOutHandler );
-			_menu.addEventListener( MenuEvent.SET_CONTROL_TO_SELECT, onSetControlToSelectHandler );
-			_menu.addEventListener( MenuEvent.SET_CONTROL_TO_POLYGON, onSetControlToAddHandler );
-			addChild( _menu );
+			this._menu = new Menu;
+			this._menu.x = 5;
+			this._menu.y = 5;
+			this.addChild( this._menu );
+
 
 			this._editorLibrary = new EditorLibrary();
-			this._editorLibrary.addEventListener( EditorLibraryEvent.OPEN_REQUEST, onEditorLibraryOpenHandler )
+			//this._editorLibrary.addEventListener( EditorLibraryEvent.OPEN_REQUEST, onEditorLibraryOpenHandler )
 			this._editorLibrary.addEventListener( EditorLibraryEvent.ADD_ELEMENT_TO_WORLD_REQUEST, onAddelementToWorldRequestHandler )
 			this.addChild( this._editorLibrary );
 
-			this._editorWorld.addEventListener( EditorWorldEvent.ON_VIEW_RESIZE, this.onEditorWorldResize );
+			this._editorMain.addEventListener( EditorWorldEvent.ON_VIEW_RESIZE, this.onEditorWorldResize );
 
 			addChild( _importPanel = new ImportPanel );
 			_importPanel.addEventListener( ImportEvent.DATA_IMPORTED, onDataImportedHandler );
@@ -75,11 +73,26 @@
 
 			addChild( _exportPanel = new ExportPanel );
 			_exportPanel.addEventListener( MenuEvent.CLOSE_REQUEST, onCloseExportPanelHandler );
+
+			this.createTools();
+		}
+
+		private function createTools():void
+		{
+			var toolConfig:ToolConfig = new ToolConfig();
+
+			for( var i:int = 0; i < toolConfig.configs.length; i++ )
+			{
+				var config:ToolConfigVO = toolConfig.configs[ i ];
+
+				this._menu.addElement( config.id, config.name, config.iconImageSrc );
+				this._menu.addEventListener( MenuEvent.CHANGE_CONTROLLER, onChangeControllerHandler );
+			}
 		}
 
 		private function onImportRequestHandler( e:MenuEvent ):void
 		{
-			_importPanel.show( );
+			_importPanel.show();
 		}
 
 		private function onEditorWorldResize( e:EditorWorldEvent ):void
@@ -93,54 +106,49 @@
 
 		private function onDataImportedHandler( e:ImportEvent ):void
 		{
-			_editorWorld.loadLevel( e.levelData );
+			_editorMain.loadLevel( e.levelData );
 
 			onCloseImportPanelHandler( new MenuEvent( MenuEvent.CLOSE_REQUEST ) );
 		}
 
 		private function onCloseImportPanelHandler( e:MenuEvent ):void
 		{
-			_importPanel.hide( );
+			_importPanel.hide();
 		}
 
 		private function onExportRequestHandler( e:MenuEvent ):void
 		{
-			_exportPanel.show( _editorWorld.getLevelData( ) );
+			_exportPanel.show( _editorMain.getLevelData() );
 		}
 
 		private function onCloseExportPanelHandler( e:MenuEvent ):void
 		{
-			_exportPanel.hide( );
+			_exportPanel.hide();
 		}
 
 		private function zoomInHandler( e:MenuEvent ):void
 		{
-			_editorWorld.zoomIn();
+			_editorMain.zoomIn();
 		}
 
 		private function zoomOutHandler( e:MenuEvent ):void
 		{
-			_editorWorld.zoomOut();
+			_editorMain.zoomOut();
 		}
 
 		private function onSetControlToSelectHandler( e:MenuEvent ):void
 		{
-			_editorWorld.setControl( EditorWorld.CONTROL_TYPE_SELECT );
+			_editorMain.setControl( EditorMain.CONTROL_TYPE_SELECT );
 		}
 
 		private function onSetControlToAddHandler( e:MenuEvent ):void
 		{
-			_editorWorld.setControl( EditorWorld.CONTROL_TYPE_POLYGON );
-		}
-
-		private function onEditorLibraryOpenHandler( e:EditorLibraryEvent ):void
-		{
-			this._menu.reset();
+			_editorMain.setControl( EditorMain.CONTROL_TYPE_POLYGON );
 		}
 
 		private function closeEditorLibrary():void
 		{
-			if ( this._editorLibrary )
+			if( this._editorLibrary )
 			{
 				this._editorLibrary.closeLibrary();
 			}
@@ -148,7 +156,12 @@
 
 		private function onAddelementToWorldRequestHandler( e:EditorLibraryEvent ):void
 		{
-			this._editorWorld.addLibraryElement( e.libraryElementVO );
+			this._editorMain.addLibraryElement( e.libraryElementVO );
+		}
+
+		private function onChangeControllerHandler( e:MenuEvent ):void
+		{
+			this._editorMain.setControl( e.id );
 		}
 	}
 }

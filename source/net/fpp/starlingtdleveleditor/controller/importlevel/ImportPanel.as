@@ -1,5 +1,6 @@
-package net.fpp.starlingtdleveleditor
+package net.fpp.starlingtdleveleditor.controller.importlevel
 {
+	import net.fpp.starlingtdleveleditor.*;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;

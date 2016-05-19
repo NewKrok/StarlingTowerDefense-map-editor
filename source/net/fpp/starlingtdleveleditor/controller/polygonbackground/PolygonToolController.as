@@ -1,4 +1,4 @@
-package net.fpp.starlingtdleveleditor.controller.polygontool
+package net.fpp.starlingtdleveleditor.controller.polygonbackground
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -6,19 +6,20 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 	import flash.geom.Point;
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
-	import net.fpp.starlingtdleveleditor.EditorWorld;
-	import net.fpp.starlingtdleveleditor.controller.polygontool.event.PolygonToolMenuEvent;
+	import net.fpp.starlingtdleveleditor.EditorMain;
+	import net.fpp.starlingtdleveleditor.controller.AToolController;
+	import net.fpp.starlingtdleveleditor.controller.polygonbackground.event.PolygonToolMenuEvent;
 	import net.fpp.starlingtowerdefense.game.config.terraintexture.TerrainTextureConfig;
 	import net.fpp.starlingtowerdefense.game.module.background.terrainbackground.vo.TerrainTextureVO;
 	import net.fpp.starlingtowerdefense.utils.BrushPattern;
 
-	public class PolygonToolController
+	public class PolygonToolController extends AToolController
 	{
 		private const MIN_DISTANCE:Number = 100;
 
 		protected var _polygonViews:Vector.<PolygonView> = new <PolygonView>[];
 
-		protected var _editorWorld:EditorWorld;
+		protected var _editorWorld:EditorMain;
 		protected var _elementContainer:Sprite;
 		protected var _polygonViewContainer:Sprite;
 
@@ -32,13 +33,15 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 		private var _lastSelectedPolygonIndex:int = 0;
 		private var _selectedPolygonView:PolygonView;
 
-		public function PolygonToolController( editorWorld:EditorWorld, elementContainer:Sprite )
+		public function PolygonToolController()
 		{
+			var editorWorld, elementContainer;
+
 			this._editorWorld = editorWorld;
 			this._elementContainer = elementContainer;
 
 			this._polygonViewContainer = new Sprite();
-			this._elementContainer.addChild( this._polygonViewContainer );
+			//this._elementContainer.addChild( this._polygonViewContainer );
 
 			this._polygonToolMenu = new PolygonToolMenu();
 		}
@@ -130,7 +133,7 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 			for( var i:int = 0; i < this._polygonViews.length; i++ )
 			{
 				var route:Vector.<PolygonNodeView> = this._polygonViews[ i ].polygonNodeViews;
-				
+
 				for( var j:int = 0; j < route.length; j++ )
 				{
 					var distance:Number;
@@ -255,6 +258,11 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 				return;
 			}
 
+			if ( this._selectedPolygonView )
+			{
+				this._selectedPolygonView.unmark();
+			}
+
 			this._selectedPolygonView = e.currentTarget as PolygonView;
 			this._selectedPolygonView.mark();
 
@@ -342,8 +350,8 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 			// Temporary constants
 			var ingameGraphics:Sprite = new BrushPattern(
 					points,
-					StaticBitmapAssetManager.instance.getBitmapData( terrainTextureVO.borderTextureId ),
-					StaticBitmapAssetManager.instance.getBitmapData( terrainTextureVO.contentTextureId ),
+					terrainTextureVO.borderTextureId ? StaticBitmapAssetManager.instance.getBitmapData( terrainTextureVO.borderTextureId ) : null,
+					terrainTextureVO.contentTextureId ? StaticBitmapAssetManager.instance.getBitmapData( terrainTextureVO.contentTextureId ) : null,
 					30 / 2,
 					40 / 2
 			);

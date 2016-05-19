@@ -1,9 +1,10 @@
 /**
  * Created by newkrok on 15/05/16.
  */
-package net.fpp.starlingtdleveleditor.controller.polygontool
+package net.fpp.starlingtdleveleditor.controller.polygonbackground
 {
 	import flash.display.Sprite;
+	import flash.events.Event;
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
 

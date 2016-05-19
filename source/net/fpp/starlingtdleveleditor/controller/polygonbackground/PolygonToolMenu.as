@@ -1,7 +1,7 @@
 /**
  * Created by newkrok on 15/05/16.
  */
-package net.fpp.starlingtdleveleditor.controller.polygontool
+package net.fpp.starlingtdleveleditor.controller.polygonbackground
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -11,7 +11,7 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 	import net.fpp.starlingtdleveleditor.assets.skin.CSkinAsset;
 	import net.fpp.starlingtdleveleditor.assets.skin.SkinManager;
 	import net.fpp.starlingtdleveleditor.component.Button;
-	import net.fpp.starlingtdleveleditor.controller.polygontool.event.PolygonToolMenuEvent;
+	import net.fpp.starlingtdleveleditor.controller.polygonbackground.event.PolygonToolMenuEvent;
 
 	public class PolygonToolMenu extends Sprite
 	{
@@ -65,7 +65,7 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 			this._bringForwardButton = new Button(
 					SkinManager.getSkin( CSkinAsset.BUTTON_NORMAL_STATE ),
 					SkinManager.getSkin( CSkinAsset.BUTTON_OVER_STATE ),
-					'Bring Forward'
+					'Forward'
 			);
 			this._bringForwardButton.disable();
 
@@ -77,7 +77,7 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 			this._sendBackwardButton = new Button(
 					SkinManager.getSkin( CSkinAsset.BUTTON_NORMAL_STATE ),
 					SkinManager.getSkin( CSkinAsset.BUTTON_OVER_STATE ),
-					'Send Backward'
+					'Backward'
 			);
 			this._sendBackwardButton.disable();
 

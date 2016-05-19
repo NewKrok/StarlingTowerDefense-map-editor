@@ -1,7 +1,7 @@
 /**
  * Created by newkrok on 16/05/16.
  */
-package net.fpp.starlingtdleveleditor.controller.polygontool
+package net.fpp.starlingtdleveleditor.controller.polygonbackground
 {
 	import flash.display.Sprite;
 	import flash.filters.GlowFilter;

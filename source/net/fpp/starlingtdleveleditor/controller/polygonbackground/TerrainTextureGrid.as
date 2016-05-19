@@ -1,7 +1,7 @@
 /**
  * Created by newkrok on 15/05/16.
  */
-package net.fpp.starlingtdleveleditor.controller.polygontool
+package net.fpp.starlingtdleveleditor.controller.polygonbackground
 {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -9,7 +9,7 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 	import net.fpp.common.display.UIBox;
 	import net.fpp.common.display.UIGrid;
 	import net.fpp.common.geom.SimplePoint;
-	import net.fpp.starlingtdleveleditor.controller.polygontool.event.PolygonToolMenuEvent;
+	import net.fpp.starlingtdleveleditor.controller.polygonbackground.event.PolygonToolMenuEvent;
 	import net.fpp.starlingtowerdefense.game.config.terraintexture.TerrainTextureConfig;
 	import net.fpp.starlingtowerdefense.game.module.background.terrainbackground.vo.TerrainTextureVO;
 
@@ -19,10 +19,8 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 
 		public function TerrainTextureGrid()
 		{
-			this._elementContainer = new UIGrid( 3, new SimplePoint( 40, 40 ) );
-			this._elementContainer.gap = 10;
-			this._elementContainer.borderColor = 0x666666;
-			this._elementContainer.isBorderEnabled = true;
+			this._elementContainer = new UIGrid( 3, new SimplePoint( 32, 32 ) );
+			this._elementContainer.gap = 5;
 
 			this.addChild( this._elementContainer );
 
@@ -37,7 +35,11 @@ package net.fpp.starlingtdleveleditor.controller.polygontool
 			{
 				var container:UIBox = new UIBox();
 
-				container.addChild( new TerrainTextureView( terrainTextures[ i ] ) );
+				var terrainTextureView:TerrainTextureView = new TerrainTextureView( terrainTextures[ i ] )
+				terrainTextureView.width = this._elementContainer.gridSize.x;
+				terrainTextureView.height = this._elementContainer.gridSize.y;
+
+				container.addChild( terrainTextureView );
 
 				this._elementContainer.addChild( container );
 			}

@@ -4,9 +4,9 @@ package net.fpp.starlingtdleveleditor
 
 	public class FinishMarker extends BaseUIComponent
 	{
-		protected var _editorWorld:EditorWorld;
+		protected var _editorWorld:EditorMain;
 		
-		public function FinishMarker( editorWorld:EditorWorld )
+		public function FinishMarker( editorWorld:EditorMain )
 		{
 			_editorWorld = editorWorld;
 			mouseChildren = false;

@@ -7,18 +7,18 @@
 	import flash.text.TextFormat;
 
 	import net.fpp.starlingtdleveleditor.assets.library.LibraryElementVO;
-	import net.fpp.starlingtdleveleditor.controller.polygontool.PolygonToolController;
+	import net.fpp.starlingtdleveleditor.controller.polygonbackground.PolygonToolController;
 
 	import net.fpp.starlingtdleveleditor.data.LevelDataVO;
 	import net.fpp.starlingtdleveleditor.events.EditorLibraryEvent;
 	import net.fpp.starlingtdleveleditor.events.EditorWorldEvent;
 
-	public class EditorWorld extends BaseUIComponent
+	public class EditorMain extends BaseUIComponent
 	{
 		protected const DEFAULT_WORLD_SIZE:Point = new Point( 1600, 1600 );
 
-		public static const CONTROL_TYPE_SELECT:String = 'EditorWorld.CONTROL_TYPE_SELECT';
-		public static const CONTROL_TYPE_POLYGON:String = 'EditorWorld.CONTROL_TYPE_POLYGON';
+		public static const CONTROL_TYPE_SELECT:String = 'EditorMain.CONTROL_TYPE_SELECT';
+		public static const CONTROL_TYPE_POLYGON:String = 'EditorMain.CONTROL_TYPE_POLYGON';
 
 		protected var _background:Sprite;
 		protected var _polygonContainer:Sprite;
@@ -37,7 +37,7 @@
 
 		protected var _polygonToolController:PolygonToolController;
 
-		public function EditorWorld()
+		public function EditorMain()
 		{
 		}
 
@@ -59,7 +59,7 @@
 
 		protected function initControllers():void
 		{
-			this._polygonToolController = new PolygonToolController( this, this._polygonContainer );
+			//this._polygonToolController = new PolygonToolController( this, this._polygonContainer );
 		}
 
 		protected function onMouseDownHandler( e:MouseEvent ):void
@@ -187,9 +187,10 @@
 
 		public function setControl( type:String ):void
 		{
-			_controlType = type;
+			this._controlType = type;
+			trace('>>>',this._controlType);
 
-			this.deactivateLibraryElements();
+			/*this.deactivateLibraryElements();
 
 			this._polygonToolController.deactivate();
 
@@ -206,7 +207,7 @@
 				case CONTROL_TYPE_POLYGON:
 					this._polygonToolController.activate();
 					break;
-			}
+			}*/
 		}
 
 		protected function removeControllerListeners():void
@@ -284,7 +285,7 @@
 
 			for( var i:int = 0; i < length; i++ )
 			{
-				var libraryElementVO:LibraryElementVO = new LibraryElementVO( 'import', datas[i].className );
+				var libraryElementVO:LibraryElementVO = new LibraryElementVO( 'importlevel', datas[i].className );
 				libraryElementVO.scale = datas[i].scale;
 				libraryElementVO.position = new Point( datas[i].x + this.x, datas[i].y + this.y );
 

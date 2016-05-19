@@ -1,7 +1,7 @@
 /**
  * Created by newkrok on 15/05/16.
  */
-package net.fpp.starlingtdleveleditor.controller.polygontool.event
+package net.fpp.starlingtdleveleditor.controller.polygonbackground.event
 {
 	import flash.events.Event;
 
