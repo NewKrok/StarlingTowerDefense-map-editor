@@ -1,10 +1,11 @@
-package net.fpp.starlingtdleveleditor
+package net.fpp.starlingtdleveleditor.background
 {
+	import net.fpp.starlingtdleveleditor.*;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 
-	public class Background extends BaseUIComponent
+	public class BluePrintBackground extends BaseUIComponent
 	{
 		private const LARGE_RECTANGLE_SIZE:int = 200;
 		private const SMALL_RECTANGLE_SIZE:int = 20;
@@ -13,7 +14,7 @@ package net.fpp.starlingtdleveleditor
 
 		protected var _scale:Number = 1;
 
-		public function Background()
+		public function BluePrintBackground()
 		{
 		}
 		

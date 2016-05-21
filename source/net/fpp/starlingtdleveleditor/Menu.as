@@ -1,11 +1,10 @@
-package net.fpp.starlingtdleveleditor.menu
+package net.fpp.starlingtdleveleditor
 {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 
 	import net.fpp.common.display.UIBox;
-	import net.fpp.starlingtdleveleditor.BaseUIComponent;
 	import net.fpp.starlingtdleveleditor.assets.skin.CSkinAsset;
 	import net.fpp.starlingtdleveleditor.assets.skin.SkinManager;
 	import net.fpp.starlingtdleveleditor.component.IconButton;
@@ -54,15 +53,18 @@ package net.fpp.starlingtdleveleditor.menu
 			this._buttonContainer.y = padding;
 		}
 
-		public function addElement( id:String, name:String, iconImageSrc:String ):void
+		public function addElement( id:String, name:String, iconImageSrc:String, isSelectable:Boolean ):void
 		{
 			var button:IconButton = new IconButton(
 					SkinManager.getSkin( CSkinAsset.BUTTON_NORMAL_STATE ),
 					SkinManager.getSkin( CSkinAsset.BUTTON_OVER_STATE ),
 					iconImageSrc,
+					SkinManager.getSkin( CSkinAsset.BUTTON_SELECTED_STATE ),
 					25,
 					25
 			);
+
+			button.isSelectable = isSelectable;
 			button.data = id;
 			button.addEventListener( MouseEvent.CLICK, this.onButtonClickedHandler );
 
@@ -73,7 +75,26 @@ package net.fpp.starlingtdleveleditor.menu
 
 		private function onButtonClickedHandler( e:MouseEvent ):void
 		{
-			this.dispatchEvent( new MenuEvent( MenuEvent.CHANGE_CONTROLLER, ( e.currentTarget as IconButton ).data as String ) );
+			var selectedButton:IconButton = ( e.currentTarget as IconButton );
+
+			if( selectedButton.isSelectable )
+			{
+				for( var i:int = 0; i < this._buttonContainer.numChildren; i++ )
+				{
+					var button:IconButton = this._buttonContainer.getChildAt( i ) as IconButton;
+
+					if( button == selectedButton )
+					{
+						button.isSelected = true;
+					}
+					else
+					{
+						button.isSelected = false;
+					}
+				}
+			}
+
+			this.dispatchEvent( new MenuEvent( MenuEvent.CHANGE_CONTROLLER, selectedButton.data as String ) );
 		}
 	}
 }

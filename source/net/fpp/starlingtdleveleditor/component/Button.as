@@ -13,19 +13,22 @@ package net.fpp.starlingtdleveleditor.component
 
 	public class Button extends Sprite
 	{
-		private const NORMAL_STATE:String = 'Button.NORMAL_STATE';
-		private const OVER_STATE:String = 'Button.OVER_STATE';
+		protected const NORMAL_STATE:String = 'Button.NORMAL_STATE';
+		protected const OVER_STATE:String = 'Button.OVER_STATE';
 
 		private var _hitArea:Sprite;
 		private var _upSkin:DisplayObject;
 		private var _downSkin:DisplayObject;
+
+		protected var _activeSkin:DisplayObject;
+
 		private var _text:String;
 
-		private var _width:Number;
-		private var _height:Number;
+		protected var _width:Number;
+		protected var _height:Number;
 
-		private var _state:String = NORMAL_STATE;
-		private var _stateViewManifest:Dictionary;
+		protected var _state:String = NORMAL_STATE;
+		protected var _stateViewManifest:Dictionary;
 		private var _textField:TextField;
 
 		public var data:Object;
@@ -80,12 +83,22 @@ package net.fpp.starlingtdleveleditor.component
 			this._hitArea.graphics.endFill();
 		}
 
-		private function updateView():void
+		protected function updateView():void
 		{
+			if ( this._activeSkin && this._activeSkin.parent )
+			{
+				this.removeChild( this._activeSkin );
+			}
+
 			this._stateViewManifest[this._state].call();
+
+			if ( this._activeSkin )
+			{
+				this.addChildAt( this._activeSkin, 0 );
+			}
 		}
 
-		private function updateSize():void
+		protected function updateSize():void
 		{
 			this.updateHitAreaView();
 
@@ -108,22 +121,12 @@ package net.fpp.starlingtdleveleditor.component
 
 		private function updateNormalStateView():void
 		{
-			if ( this._downSkin.parent )
-			{
-				this.removeChild( this._downSkin );
-			}
-
-			this.addChildAt( this._upSkin, 0 );
+			this._activeSkin = this._upSkin;
 		}
 
 		private function updateOverStateView():void
 		{
-			if ( this._upSkin.parent )
-			{
-				this.removeChild( this._upSkin );
-			}
-
-			this.addChildAt( this._downSkin, 0 );
+			this._activeSkin = this._downSkin;
 		}
 
 		public function enable():void
@@ -149,13 +152,13 @@ package net.fpp.starlingtdleveleditor.component
 			this.useHandCursor = false;
 		}
 
-		private function mouseOverHandler( e:MouseEvent ):void
+		protected function mouseOverHandler( e:MouseEvent ):void
 		{
 			this._state = this.OVER_STATE;
 			this.updateView();
 		}
 
-		private function mouseOutHandler( e:MouseEvent ):void
+		protected function mouseOutHandler( e:MouseEvent ):void
 		{
 			this._state = this.NORMAL_STATE;
 			this.updateView();

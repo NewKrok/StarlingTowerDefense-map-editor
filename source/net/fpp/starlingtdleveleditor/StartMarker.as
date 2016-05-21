@@ -4,9 +4,9 @@ package net.fpp.starlingtdleveleditor
 
 	public class StartMarker extends BaseUIComponent
 	{
-		protected var _editorWorld:EditorMain;
+		protected var _editorWorld:EditorWorld;
 		
-		public function StartMarker( editorWorld:EditorMain )
+		public function StartMarker( editorWorld:EditorWorld )
 		{
 			_editorWorld = editorWorld;
 			mouseChildren = false;
