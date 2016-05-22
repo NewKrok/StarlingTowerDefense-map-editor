@@ -8,7 +8,6 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 
 	import net.fpp.common.geom.SimplePoint;
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
-	import net.fpp.starlingtdleveleditor.events.MenuEvent;
 	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
 	import net.fpp.starlingtowerdefense.vo.PolygonBackgroundVO;
 
@@ -59,15 +58,28 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 
 		protected function closeButtonHandler( e:MouseEvent ):void
 		{
-			dispatchEvent( new MenuEvent( MenuEvent.CLOSE_REQUEST ) );
+			this.deactivate();
 		}
 
 		protected function startImport( e:MouseEvent ):void
 		{
 			var data:String = _dialog.inputText.text;
 
+			if ( data == '' )
+			{
+				return;
+			}
+
 			var levelDataVO:LevelDataVO;
-			levelDataVO = convertJSONDataToLevelData( JSON.parse( data ) );
+
+			try
+			{
+				levelDataVO = convertJSONDataToLevelData( JSON.parse( data ) );
+			} catch( e:Error )
+			{
+				_dialog.inputText.text = e.message;
+				return;
+			}
 
 			for( var key:String in this._toolControllers )
 			{
@@ -78,6 +90,8 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 					toolController.setLevelDataVO( levelDataVO );
 				}
 			}
+
+			this.deactivate();
 		}
 
 		protected function convertJSONDataToLevelData( data:Object ):LevelDataVO

@@ -264,7 +264,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		private function onPolygonClickHandler( e:MouseEvent ):void
 		{
-			if( e.target is PolygonNodeView )
+			if( !this._isActivated || e.target is PolygonNodeView )
 			{
 				return;
 			}

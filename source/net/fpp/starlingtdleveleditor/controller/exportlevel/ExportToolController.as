@@ -9,7 +9,6 @@ package net.fpp.starlingtdleveleditor.controller.exportlevel
 	import flash.utils.describeType;
 
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
-	import net.fpp.starlingtdleveleditor.events.MenuEvent;
 	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
 
 	public class ExportToolController extends AToolController
@@ -59,7 +58,7 @@ package net.fpp.starlingtdleveleditor.controller.exportlevel
 
 		protected function closeButtonHandler( e:MouseEvent ):void
 		{
-			dispatchEvent( new MenuEvent( MenuEvent.CLOSE_REQUEST ) );
+			this.deactivate();
 		}
 
 		protected function convertLevelDataToJSONString( levelDataVO:LevelDataVO ):String
@@ -69,7 +68,7 @@ package net.fpp.starlingtdleveleditor.controller.exportlevel
 			data.libraryElements = levelDataVO.libraryElements;
 			data.polygonBackgroundData = levelDataVO.polygonBackgroundData;
 
-			return JSON.stringify( data );
+			return JSON.stringify( levelDataVO );
 		}
 
 		public function show():void

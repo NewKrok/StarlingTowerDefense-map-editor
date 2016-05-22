@@ -4,7 +4,6 @@ package net.fpp.starlingtdleveleditor.events
 
 	public class MenuEvent extends Event
 	{
-		public static const CLOSE_REQUEST:String = 'MenuEvent.CLOSE_REQUEST';
 		public static const CHANGE_CONTROLLER:String = 'MenuEvent.CHANGE_CONTROLLER';
 
 		public var id:String;
