@@ -1,7 +1,7 @@
 /**
  * Created by newkrok on 21/05/16.
  */
-package net.fpp.starlingtdleveleditor.controller.events
+package net.fpp.starlingtdleveleditor.controller.common.events
 {
 	import flash.events.Event;
 

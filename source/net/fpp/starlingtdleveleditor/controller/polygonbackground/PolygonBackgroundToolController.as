@@ -6,12 +6,15 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 	import flash.geom.Point;
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
-	import net.fpp.starlingtdleveleditor.controller.AToolController;
-	import net.fpp.starlingtdleveleditor.controller.events.ToolControllerEvent;
+	import net.fpp.common.geom.SimplePoint;
+	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
+	import net.fpp.starlingtdleveleditor.controller.common.events.ToolControllerEvent;
 	import net.fpp.starlingtdleveleditor.controller.polygonbackground.event.PolygonToolMenuEvent;
 	import net.fpp.starlingtowerdefense.game.config.terraintexture.TerrainTextureConfig;
 	import net.fpp.starlingtowerdefense.game.module.background.terrainbackground.vo.TerrainTextureVO;
 	import net.fpp.starlingtowerdefense.utils.BrushPattern;
+	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
+	import net.fpp.starlingtowerdefense.vo.PolygonBackgroundVO;
 
 	public class PolygonBackgroundToolController extends AToolController
 	{
@@ -36,10 +39,13 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			this._polygonToolMenu = new PolygonToolMenu();
 		}
 
-		override public function activate():void
+		override protected function viewContainerInited():void
 		{
 			this._view.addChild( this._polygonViewContainer = new Sprite() );
+		}
 
+		override public function activate():void
+		{
 			this._isActivated = true;
 
 			this._view.addEventListener( MouseEvent.CLICK, this.addPolygonRequest );
@@ -232,9 +238,20 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			this.addNewPolygon( newPolygon );
 		}
 
-		private function addNewPolygon( polygon:Vector.<Point> ):void
+		private function addNewPolygon( polygon:Vector.<Point>, terrainTextureId:String = '' ):void
 		{
-			var polygonView:PolygonView = new PolygonView( TerrainTextureConfig.instance.getTerrainTextureList()[ 0 ] );
+			var terrainTextureVO:TerrainTextureVO;
+
+			if ( terrainTextureId == '' )
+			{
+				terrainTextureVO = TerrainTextureConfig.instance.getTerrainTextureList()[0];
+			}
+			else
+			{
+				terrainTextureVO = TerrainTextureConfig.instance.getTerrainTextureVO( terrainTextureId );
+			}
+
+			var polygonView:PolygonView = new PolygonView( terrainTextureVO );
 			polygonView.unmark();
 
 			this._polygonViewContainer.addChild( polygonView );
@@ -352,45 +369,6 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			return ingameGraphics;
 		}
 
-		public function loadPolygons( polygons:Array ):void
-		{
-			for( var i:int = 0; i < polygons.length; i++ )
-			{
-				var newPolygon:Vector.<Point> = new <Point>[];
-
-				for( var j:int = 0; j < polygons[ i ].length; j++ )
-				{
-					newPolygon.push( new Point( polygons[ i ][ j ].x, polygons[ i ][ j ].y ) );
-				}
-
-				this.addNewPolygon( newPolygon );
-			}
-
-			this.draw();
-		}
-
-		public function getPolygons():Array
-		{
-			var polygons:Array = [];
-
-			for( var i:int = 0; i < this._polygonViews.length; i++ )
-			{
-				var polygonElements:Array = [];
-
-				for( var j:int = 0; j < this._polygonViews[ i ].polygonNodeViews.length; j++ )
-				{
-					polygonElements.push( {
-						x: this._polygonViews[ i ].polygonNodeViews[ j ].x,
-						y: this._polygonViews[ i ].polygonNodeViews[ j ].y
-					} );
-				}
-
-				polygons.push( polygonElements );
-			}
-
-			return polygons;
-		}
-
 		private function openPolygonToolMenu():void
 		{
 			this._view.addChild( this._polygonToolMenu );
@@ -479,6 +457,50 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			this.closePolygonToolMenu();
 
 			this.draw();
+		}
+
+		override public function setLevelDataVO( levelDataVO:LevelDataVO ):void
+		{
+			for( var i:int = 0; i < levelDataVO.polygonBackgroundData.length; i++ )
+			{
+				var newPolygon:Vector.<Point> = new <Point>[];
+				var polygon:Vector.<SimplePoint> = levelDataVO.polygonBackgroundData[ i ].polygon;
+
+				for( var j:int = 0; j < polygon.length; j++ )
+				{
+					newPolygon.push( new Point( polygon[ j ].x, polygon[ j ].y ) );
+				}
+
+				this.addNewPolygon( newPolygon, levelDataVO.polygonBackgroundData[ i ].terrainTextureId );
+			}
+
+			this.draw();
+		}
+
+		override public function getLevelDataVO():LevelDataVO
+		{
+			var levelDataVO:LevelDataVO = new LevelDataVO();
+
+			var polygonBackgroundDatas:Vector.<PolygonBackgroundVO> = new <PolygonBackgroundVO>[];
+
+			for( var i:int = 0; i < this._polygonViews.length; i++ )
+			{
+				var polygonElements:Vector.<SimplePoint> = new <SimplePoint>[];
+
+				for( var j:int = 0; j < this._polygonViews[ i ].polygonNodeViews.length; j++ )
+				{
+					polygonElements.push( new SimplePoint(
+							this._polygonViews[ i ].polygonNodeViews[ j ].x,
+							this._polygonViews[ i ].polygonNodeViews[ j ].y
+					) );
+				}
+
+				polygonBackgroundDatas.push( new PolygonBackgroundVO( this._polygonViews[ i ].terrainTextureVO.id, polygonElements ) );
+			}
+
+			levelDataVO.polygonBackgroundData = polygonBackgroundDatas;
+
+			return levelDataVO;
 		}
 	}
 }

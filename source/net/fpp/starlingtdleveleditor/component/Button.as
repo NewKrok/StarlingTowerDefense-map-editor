@@ -65,6 +65,7 @@ package net.fpp.starlingtdleveleditor.component
 
 			this._textField.defaultTextFormat = textFormat;
 
+			this._textField.mouseEnabled = false;
 			this._textField.autoSize = TextFieldAutoSize.CENTER;
 			this._textField.text = this._text;
 		}

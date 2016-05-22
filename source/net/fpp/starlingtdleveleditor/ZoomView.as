@@ -14,9 +14,6 @@ package net.fpp.starlingtdleveleditor
 			super.inited( );
 
 			this.resetPosition( );
-
-			this.mouseEnabled = false;
-			this.mouseChildren = false;
 		}
 
 		public function setZoom( value:Number ):void

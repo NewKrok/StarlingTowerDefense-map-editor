@@ -17,6 +17,9 @@ package net.fpp.starlingtdleveleditor
 
 		public function Menu()
 		{
+			this.x = 5;
+			this.y = 5;
+
 			this.addEventListener( Event.ADDED_TO_STAGE, this.onAddedToStageHandler );
 		}
 
