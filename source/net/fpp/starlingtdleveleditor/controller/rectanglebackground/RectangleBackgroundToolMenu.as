@@ -1,7 +1,7 @@
 /**
- * Created by newkrok on 15/05/16.
+ * Created by newkrok on 22/05/16.
  */
-package net.fpp.starlingtdleveleditor.controller.polygonbackground
+package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -13,7 +13,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 	import net.fpp.starlingtdleveleditor.component.Button;
 	import net.fpp.starlingtdleveleditor.controller.polygonbackground.event.PolygonToolMenuEvent;
 
-	public class PolygonToolMenu extends Sprite
+	public class RectangleBackgroundToolMenu extends Sprite
 	{
 		private var _background:DisplayObject;
 		private var _container:UIBox;
@@ -22,9 +22,9 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 		private var _bringForwardButton:Button;
 		private var _sendBackwardButton:Button;
 		private var _closeButton:Button;
-		private var _terrainTextureGrid:TerrainTextureGrid;
+		private var _terrainTextureGrid:RectangleBackgroundTerrainTextureGrid;
 
-		public function PolygonToolMenu()
+		public function RectangleBackgroundToolMenu()
 		{
 			this._background = SkinManager.getSkin( CSkinAsset.TRANSPARENT_BACKGROUND );
 			this.addChild( this._background );
@@ -108,7 +108,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		private function createTerrainTextureContainer():void
 		{
-			this._terrainTextureGrid = new TerrainTextureGrid();
+			this._terrainTextureGrid = new RectangleBackgroundTerrainTextureGrid();
 
 			this._container.addChild( this._terrainTextureGrid );
 		}

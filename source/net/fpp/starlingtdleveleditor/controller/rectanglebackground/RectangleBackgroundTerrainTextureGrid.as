@@ -1,7 +1,7 @@
 /**
- * Created by newkrok on 15/05/16.
+ * Created by newkrok on 22/05/16.
  */
-package net.fpp.starlingtdleveleditor.controller.polygonbackground
+package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -9,15 +9,16 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 	import net.fpp.common.display.UIBox;
 	import net.fpp.common.display.UIGrid;
 	import net.fpp.common.geom.SimplePoint;
+	import net.fpp.starlingtdleveleditor.controller.polygonbackground.PolygonBackgroundTerrainTextureView;
 	import net.fpp.starlingtdleveleditor.controller.polygonbackground.event.PolygonToolMenuEvent;
 	import net.fpp.starlingtowerdefense.game.config.terraintexture.TerrainTextureConfig;
 	import net.fpp.starlingtowerdefense.game.module.background.terrainbackground.vo.TerrainTextureVO;
 
-	public class TerrainTextureGrid extends Sprite
+	public class RectangleBackgroundTerrainTextureGrid extends Sprite
 	{
 		private var _elementContainer:UIGrid;
 
-		public function TerrainTextureGrid()
+		public function RectangleBackgroundTerrainTextureGrid()
 		{
 			this._elementContainer = new UIGrid( 3, new SimplePoint( 32, 32 ) );
 			this._elementContainer.gap = 5;
@@ -35,7 +36,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			{
 				var container:UIBox = new UIBox();
 
-				var terrainTextureView:TerrainTextureView = new TerrainTextureView( terrainTextures[ i ] )
+				var terrainTextureView:PolygonBackgroundTerrainTextureView = new PolygonBackgroundTerrainTextureView( terrainTextures[ i ] )
 				terrainTextureView.width = this._elementContainer.gridSize.x;
 				terrainTextureView.height = this._elementContainer.gridSize.y;
 
@@ -63,9 +64,9 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		private function onMouseDownHandler( e:MouseEvent ):void
 		{
-			if( e.target is TerrainTextureView )
+			if( e.target is PolygonBackgroundTerrainTextureView )
 			{
-				this.dispatchEvent( new PolygonToolMenuEvent( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, ( e.target as TerrainTextureView ).getTerrainTextureVO() ) );
+				this.dispatchEvent( new PolygonToolMenuEvent( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, ( e.target as PolygonBackgroundTerrainTextureView ).getTerrainTextureVO() ) );
 			}
 		}
 	}

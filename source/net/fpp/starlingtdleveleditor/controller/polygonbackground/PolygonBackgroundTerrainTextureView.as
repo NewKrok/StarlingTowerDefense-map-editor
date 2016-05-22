@@ -10,11 +10,11 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 	import net.fpp.starlingtowerdefense.game.module.background.terrainbackground.vo.TerrainTextureVO;
 
-	public class TerrainTextureView extends Sprite
+	public class PolygonBackgroundTerrainTextureView extends Sprite
 	{
 		private var _terrainTextureVO:TerrainTextureVO;
 
-		public function TerrainTextureView( terrainTextureVO:TerrainTextureVO )
+		public function PolygonBackgroundTerrainTextureView( terrainTextureVO:TerrainTextureVO )
 		{
 			this._terrainTextureVO = terrainTextureVO;
 

@@ -23,6 +23,7 @@ package net.fpp.starlingtdleveleditor.controller.common
 		private var _mouseEnabled:Boolean = true;
 
 		public var isSelectable:Boolean;
+		protected var _isActivated:Boolean;
 
 		public function AToolController()
 		{
@@ -30,15 +31,16 @@ package net.fpp.starlingtdleveleditor.controller.common
 
 		public function activate():void
 		{
-			trace( 'Warning - Missing activate function override :: ' + this.id );
+			this._isActivated = true;
+
+			this.mouseEnabled = true;
 		}
 
 		public function deactivate():void
 		{
-			if( this.isSelectable )
-			{
-				trace( 'Warning - Missing deactivate function override :: ' + this.id );
-			}
+			this._isActivated = false;
+
+			this.mouseEnabled = false;
 		}
 
 		public function getLevelDataVO():LevelDataVO
@@ -62,6 +64,11 @@ package net.fpp.starlingtdleveleditor.controller.common
 
 		public function set mouseEnabled( value:Boolean ):void
 		{
+			if ( value && !this._isActivated )
+			{
+				return;
+			}
+
 			this._mouseEnabled = value;
 
 			if( this._view )

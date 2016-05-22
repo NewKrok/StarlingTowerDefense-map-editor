@@ -26,9 +26,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		protected var _draggedNode:PolygonNodeView;
 
-		protected var _polygonToolMenu:PolygonToolMenu;
-
-		protected var _isActivated:Boolean = false;
+		protected var _polygonBackgroundToolMenu:PolygonBackgroundToolMenu;
 
 		private var _lastAddedNodeTime:Number = 0;
 		private var _lastSelectedPolygonIndex:int = 0;
@@ -36,7 +34,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		public function PolygonBackgroundToolController()
 		{
-			this._polygonToolMenu = new PolygonToolMenu();
+			this._polygonBackgroundToolMenu = new PolygonBackgroundToolMenu();
 		}
 
 		override protected function viewContainerInited():void
@@ -46,7 +44,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		override public function activate():void
 		{
-			this._isActivated = true;
+			super.activate();
 
 			this._view.addEventListener( MouseEvent.CLICK, this.addPolygonRequest );
 			this._view.addEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
@@ -57,7 +55,9 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		override public function deactivate():void
 		{
-			this._isActivated = false;
+			super.deactivate();
+
+			this.closePolygonToolMenu();
 
 			this._view.removeEventListener( MouseEvent.CLICK, this.addPolygonRequest );
 			this._view.removeEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
@@ -109,7 +109,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 			var localPoint:Point = this._view.localToGlobal( new Point( mouseX, mouseY ) );
 
-			return this._polygonToolMenu.hitTestPoint( localPoint.x, localPoint.y );
+			return this._polygonBackgroundToolMenu.hitTestPoint( localPoint.x, localPoint.y );
 		}
 
 		private function isPolygonViewClicked( e:MouseEvent ):Boolean
@@ -214,13 +214,13 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		protected function addPolygonRequest( e:MouseEvent ):void
 		{
-			if( !this._polygonToolMenu.parent && !isPolygonToolMenuClicked( e ) && !this.isPolygonViewClicked( e ) && !this._draggedNode && new Date().time - this._lastAddedNodeTime > 1000 )
+			if( !this._polygonBackgroundToolMenu.parent && !isPolygonToolMenuClicked( e ) && !this.isPolygonViewClicked( e ) && !this._draggedNode && new Date().time - this._lastAddedNodeTime > 1000 )
 			{
 				this.addNewPolygonToPoint( _view.mouseX, _view.mouseY );
 				this.draw();
 			}
 
-			if( this._polygonToolMenu.parent && !this.isPolygonToolMenuClicked( e ) )
+			if( this._polygonBackgroundToolMenu.parent && !this.isPolygonToolMenuClicked( e ) )
 			{
 				this.closePolygonToolMenu();
 			}
@@ -371,33 +371,33 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		private function openPolygonToolMenu():void
 		{
-			this._view.addChild( this._polygonToolMenu );
+			this._view.addChild( this._polygonBackgroundToolMenu );
 
-			this._polygonToolMenu.x = this._view.mouseX;
-			this._polygonToolMenu.y = this._view.mouseY;
+			this._polygonBackgroundToolMenu.x = this._view.mouseX;
+			this._polygonBackgroundToolMenu.y = this._view.mouseY;
 
-			this._polygonToolMenu.addEventListener( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainTextureChangeRequestHandler );
-			this._polygonToolMenu.addEventListener( PolygonToolMenuEvent.BRING_FORWARD, this.onBringForwardPolyginRequestHandler );
-			this._polygonToolMenu.addEventListener( PolygonToolMenuEvent.SEND_BACKWARD, this.onSendBackwardPolyginRequestHandler );
-			this._polygonToolMenu.addEventListener( PolygonToolMenuEvent.CLOSE_REQUEST, this.onClosePolyginRequestHandler );
-			this._polygonToolMenu.addEventListener( PolygonToolMenuEvent.DELETE_REQUEST, this.onDeletePolyginRequestHandler );
-			this._polygonToolMenu.enable();
+			this._polygonBackgroundToolMenu.addEventListener( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainTextureChangeRequestHandler );
+			this._polygonBackgroundToolMenu.addEventListener( PolygonToolMenuEvent.BRING_FORWARD, this.onBringForwardPolyginRequestHandler );
+			this._polygonBackgroundToolMenu.addEventListener( PolygonToolMenuEvent.SEND_BACKWARD, this.onSendBackwardPolyginRequestHandler );
+			this._polygonBackgroundToolMenu.addEventListener( PolygonToolMenuEvent.CLOSE_REQUEST, this.onClosePolyginRequestHandler );
+			this._polygonBackgroundToolMenu.addEventListener( PolygonToolMenuEvent.DELETE_REQUEST, this.onDeletePolyginRequestHandler );
+			this._polygonBackgroundToolMenu.enable();
 		}
 
 		private function closePolygonToolMenu():void
 		{
-			if( this._polygonToolMenu.parent )
+			if( this._polygonBackgroundToolMenu.parent )
 			{
 				this._selectedPolygonView.unmark();
 
-				this._view.removeChild( this._polygonToolMenu );
+				this._view.removeChild( this._polygonBackgroundToolMenu );
 
-				this._polygonToolMenu.removeEventListener( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainTextureChangeRequestHandler );
-				this._polygonToolMenu.removeEventListener( PolygonToolMenuEvent.BRING_FORWARD, this.onBringForwardPolyginRequestHandler );
-				this._polygonToolMenu.removeEventListener( PolygonToolMenuEvent.SEND_BACKWARD, this.onSendBackwardPolyginRequestHandler );
-				this._polygonToolMenu.removeEventListener( PolygonToolMenuEvent.CLOSE_REQUEST, this.onClosePolyginRequestHandler );
-				this._polygonToolMenu.removeEventListener( PolygonToolMenuEvent.DELETE_REQUEST, this.onDeletePolyginRequestHandler );
-				this._polygonToolMenu.disable();
+				this._polygonBackgroundToolMenu.removeEventListener( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainTextureChangeRequestHandler );
+				this._polygonBackgroundToolMenu.removeEventListener( PolygonToolMenuEvent.BRING_FORWARD, this.onBringForwardPolyginRequestHandler );
+				this._polygonBackgroundToolMenu.removeEventListener( PolygonToolMenuEvent.SEND_BACKWARD, this.onSendBackwardPolyginRequestHandler );
+				this._polygonBackgroundToolMenu.removeEventListener( PolygonToolMenuEvent.CLOSE_REQUEST, this.onClosePolyginRequestHandler );
+				this._polygonBackgroundToolMenu.removeEventListener( PolygonToolMenuEvent.DELETE_REQUEST, this.onDeletePolyginRequestHandler );
+				this._polygonBackgroundToolMenu.disable();
 			}
 		}
 
