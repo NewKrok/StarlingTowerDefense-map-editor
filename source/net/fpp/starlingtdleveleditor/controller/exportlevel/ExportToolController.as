@@ -63,11 +63,6 @@ package net.fpp.starlingtdleveleditor.controller.exportlevel
 
 		protected function convertLevelDataToJSONString( levelDataVO:LevelDataVO ):String
 		{
-			var data:Object = {};
-
-			data.libraryElements = levelDataVO.libraryElements;
-			data.polygonBackgroundData = levelDataVO.polygonBackgroundData;
-
 			return JSON.stringify( levelDataVO );
 		}
 

@@ -9,10 +9,9 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 	import net.fpp.common.display.UIBox;
 	import net.fpp.common.display.UIGrid;
 	import net.fpp.common.geom.SimplePoint;
-	import net.fpp.starlingtdleveleditor.controller.polygonbackground.PolygonBackgroundTerrainTextureView;
-	import net.fpp.starlingtdleveleditor.controller.polygonbackground.event.PolygonToolMenuEvent;
-	import net.fpp.starlingtowerdefense.game.config.terraintexture.TerrainTextureConfig;
-	import net.fpp.starlingtowerdefense.game.module.background.terrainbackground.vo.TerrainTextureVO;
+	import net.fpp.starlingtdleveleditor.controller.rectanglebackground.events.RectangleBackgroundToolMenuEvent;
+	import net.fpp.starlingtowerdefense.game.config.terraintexture.RectangleBackgroundTerrainTextureConfig;
+	import net.fpp.starlingtowerdefense.game.module.background.rectanglebackground.vo.RectangleBackgroundTerrainTextureVO;
 
 	public class RectangleBackgroundTerrainTextureGrid extends Sprite
 	{
@@ -30,13 +29,13 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 
 		private function createTerrainTextures():void
 		{
-			var terrainTextures:Vector.<TerrainTextureVO> = TerrainTextureConfig.instance.getTerrainTextureList();
+			var terrainTextures:Vector.<RectangleBackgroundTerrainTextureVO> = RectangleBackgroundTerrainTextureConfig.instance.getTerrainTextureList();
 
 			for( var i:int = 0; i < terrainTextures.length; i++ )
 			{
 				var container:UIBox = new UIBox();
 
-				var terrainTextureView:PolygonBackgroundTerrainTextureView = new PolygonBackgroundTerrainTextureView( terrainTextures[ i ] )
+				var terrainTextureView:RectangleBackgroundTerrainTextureView = new RectangleBackgroundTerrainTextureView( terrainTextures[ i ] )
 				terrainTextureView.width = this._elementContainer.gridSize.x;
 				terrainTextureView.height = this._elementContainer.gridSize.y;
 
@@ -64,9 +63,9 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 
 		private function onMouseDownHandler( e:MouseEvent ):void
 		{
-			if( e.target is PolygonBackgroundTerrainTextureView )
+			if( e.target is RectangleBackgroundTerrainTextureView )
 			{
-				this.dispatchEvent( new PolygonToolMenuEvent( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, ( e.target as PolygonBackgroundTerrainTextureView ).getTerrainTextureVO() ) );
+				this.dispatchEvent( new RectangleBackgroundToolMenuEvent( RectangleBackgroundToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, ( e.target as RectangleBackgroundTerrainTextureView ).getTerrainTextureVO() ) );
 			}
 		}
 	}

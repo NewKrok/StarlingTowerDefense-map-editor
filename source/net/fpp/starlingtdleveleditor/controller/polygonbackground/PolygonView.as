@@ -6,14 +6,14 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 	import flash.display.Sprite;
 	import flash.filters.GlowFilter;
 
-	import net.fpp.starlingtowerdefense.game.module.background.terrainbackground.vo.TerrainTextureVO;
+	import net.fpp.starlingtowerdefense.game.module.background.polygonbackground.vo.PolygonBackgroundTerrainTextureVO;
 
 	public class PolygonView extends Sprite
 	{
-		public var terrainTextureVO:TerrainTextureVO;
+		public var terrainTextureVO:PolygonBackgroundTerrainTextureVO;
 		public var polygonNodeViews:Vector.<PolygonNodeView> = new <PolygonNodeView>[];
 
-		public function PolygonView( terrainTextureVO:TerrainTextureVO )
+		public function PolygonView( terrainTextureVO:PolygonBackgroundTerrainTextureVO )
 		{
 			this.terrainTextureVO = terrainTextureVO;
 		}

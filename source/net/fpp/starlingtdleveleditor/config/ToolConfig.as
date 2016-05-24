@@ -19,8 +19,8 @@ package net.fpp.starlingtdleveleditor.config
 			new ToolConfigVO( CToolId.EXPORT, 'Export', 'ExportButtonIcon', ExportToolController, false ),
 			new ToolConfigVO( CToolId.ZOOM_IN, 'Zoom In', 'ZoomInButtonIcon', ZoomInToolController, false ),
 			new ToolConfigVO( CToolId.ZOOM_OUT, 'Zoom Out', 'ZoomOutButtonIcon', ZoomOutToolController, false ),
-			new ToolConfigVO( CToolId.POLYGON_BACKGROUND, 'Polygon Background', 'PolygonBackgroundButtonIcon', PolygonBackgroundToolController, true ),
-			new ToolConfigVO( CToolId.RECTANGLE_BACKGROUND, 'Rectangle Background', 'RectangleBackgroundButtonIcon', RectangleBackgroundToolController, true )
+			new ToolConfigVO( CToolId.RECTANGLE_BACKGROUND, 'Rectangle Background', 'RectangleBackgroundButtonIcon', RectangleBackgroundToolController, true ),
+			new ToolConfigVO( CToolId.POLYGON_BACKGROUND, 'Polygon Background', 'PolygonBackgroundButtonIcon', PolygonBackgroundToolController, true )
 		];
 	}
 }

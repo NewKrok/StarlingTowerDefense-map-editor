@@ -11,7 +11,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 	import net.fpp.starlingtdleveleditor.assets.skin.CSkinAsset;
 	import net.fpp.starlingtdleveleditor.assets.skin.SkinManager;
 	import net.fpp.starlingtdleveleditor.component.Button;
-	import net.fpp.starlingtdleveleditor.controller.polygonbackground.event.PolygonToolMenuEvent;
+	import net.fpp.starlingtdleveleditor.controller.polygonbackground.events.PolygonBackgroundToolMenuEvent;
 
 	public class PolygonBackgroundToolMenu extends Sprite
 	{
@@ -122,7 +122,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			this._bringForwardButton.addEventListener( MouseEvent.CLICK, this.onBringForwardRequest );
 
 			this._terrainTextureGrid.enable();
-			this._terrainTextureGrid.addEventListener( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainChangeRequestHandler );
+			this._terrainTextureGrid.addEventListener( PolygonBackgroundToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainChangeRequestHandler );
 
 			this._closeButton.enable();
 			this._closeButton.addEventListener( MouseEvent.CLICK, this.onCloseRequest );
@@ -140,7 +140,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			this._bringForwardButton.removeEventListener( MouseEvent.CLICK, this.onBringForwardRequest );
 
 			this._terrainTextureGrid.disable();
-			this._terrainTextureGrid.removeEventListener( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainChangeRequestHandler );
+			this._terrainTextureGrid.removeEventListener( PolygonBackgroundToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainChangeRequestHandler );
 
 			this._closeButton.disable();
 			this._closeButton.removeEventListener( MouseEvent.CLICK, this.onCloseRequest );
@@ -149,35 +149,35 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			this._deleteButton.removeEventListener( MouseEvent.CLICK, this.onDeleteRequest );
 		}
 
-		private function onTerrainChangeRequestHandler( e:PolygonToolMenuEvent ):void
+		private function onTerrainChangeRequestHandler( e:PolygonBackgroundToolMenuEvent ):void
 		{
 			this.dispatchEvent( e );
 		}
 
 		private function onSendBackwardRequest( e:MouseEvent ):void
 		{
-			this.dispatchEvent( new PolygonToolMenuEvent( PolygonToolMenuEvent.SEND_BACKWARD ) );
+			this.dispatchEvent( new PolygonBackgroundToolMenuEvent( PolygonBackgroundToolMenuEvent.SEND_BACKWARD ) );
 
 			e.stopPropagation();
 		}
 
 		private function onBringForwardRequest( e:MouseEvent ):void
 		{
-			this.dispatchEvent( new PolygonToolMenuEvent( PolygonToolMenuEvent.BRING_FORWARD ) );
+			this.dispatchEvent( new PolygonBackgroundToolMenuEvent( PolygonBackgroundToolMenuEvent.BRING_FORWARD ) );
 
 			e.stopPropagation();
 		}
 
 		private function onCloseRequest( e:MouseEvent ):void
 		{
-			this.dispatchEvent( new PolygonToolMenuEvent( PolygonToolMenuEvent.CLOSE_REQUEST ) );
+			this.dispatchEvent( new PolygonBackgroundToolMenuEvent( PolygonBackgroundToolMenuEvent.CLOSE_REQUEST ) );
 
 			e.stopPropagation();
 		}
 
 		private function onDeleteRequest( e:MouseEvent ):void
 		{
-			this.dispatchEvent( new PolygonToolMenuEvent( PolygonToolMenuEvent.DELETE_REQUEST ) );
+			this.dispatchEvent( new PolygonBackgroundToolMenuEvent( PolygonBackgroundToolMenuEvent.DELETE_REQUEST ) );
 
 			e.stopPropagation();
 		}

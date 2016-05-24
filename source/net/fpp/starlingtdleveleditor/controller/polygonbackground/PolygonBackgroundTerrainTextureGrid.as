@@ -9,9 +9,9 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 	import net.fpp.common.display.UIBox;
 	import net.fpp.common.display.UIGrid;
 	import net.fpp.common.geom.SimplePoint;
-	import net.fpp.starlingtdleveleditor.controller.polygonbackground.event.PolygonToolMenuEvent;
-	import net.fpp.starlingtowerdefense.game.config.terraintexture.TerrainTextureConfig;
-	import net.fpp.starlingtowerdefense.game.module.background.terrainbackground.vo.TerrainTextureVO;
+	import net.fpp.starlingtdleveleditor.controller.polygonbackground.events.PolygonBackgroundToolMenuEvent;
+	import net.fpp.starlingtowerdefense.game.config.terraintexture.PolygonBackgroundTerrainTextureConfig;
+	import net.fpp.starlingtowerdefense.game.module.background.polygonbackground.vo.PolygonBackgroundTerrainTextureVO;
 
 	public class PolygonBackgroundTerrainTextureGrid extends Sprite
 	{
@@ -29,7 +29,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		private function createTerrainTextures():void
 		{
-			var terrainTextures:Vector.<TerrainTextureVO> = TerrainTextureConfig.instance.getTerrainTextureList();
+			var terrainTextures:Vector.<PolygonBackgroundTerrainTextureVO> = PolygonBackgroundTerrainTextureConfig.instance.getTerrainTextureList();
 
 			for( var i:int = 0; i < terrainTextures.length; i++ )
 			{
@@ -65,7 +65,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 		{
 			if( e.target is PolygonBackgroundTerrainTextureView )
 			{
-				this.dispatchEvent( new PolygonToolMenuEvent( PolygonToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, ( e.target as PolygonBackgroundTerrainTextureView ).getTerrainTextureVO() ) );
+				this.dispatchEvent( new PolygonBackgroundToolMenuEvent( PolygonBackgroundToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, ( e.target as PolygonBackgroundTerrainTextureView ).getTerrainTextureVO() ) );
 			}
 		}
 	}

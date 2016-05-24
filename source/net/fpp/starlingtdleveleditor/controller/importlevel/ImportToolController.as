@@ -3,6 +3,8 @@
  */
 package net.fpp.starlingtdleveleditor.controller.importlevel
 {
+	import avmplus.getQualifiedClassName;
+
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 
@@ -10,6 +12,7 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
 	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
 	import net.fpp.starlingtowerdefense.vo.PolygonBackgroundVO;
+	import net.fpp.starlingtowerdefense.vo.RectangleBackgroundVO;
 
 	public class ImportToolController extends AToolController
 	{
@@ -97,6 +100,7 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 		protected function convertJSONDataToLevelData( data:Object ):LevelDataVO
 		{
 			var levelData:LevelDataVO = new LevelDataVO;
+			levelData.createEmptyDatas();
 
 			for( var key:String in data )
 			{
@@ -111,6 +115,19 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 						polygonBackgroundVO.terrainTextureId = data[ key ][ i ].terrainTextureId;
 
 						levelData[ key ].push( polygonBackgroundVO );
+					}
+				}
+				else if( levelData[ key ] is Vector.<RectangleBackgroundVO> )
+				{
+					levelData[ key ] = new Vector.<RectangleBackgroundVO>;
+
+					for( i = 0; i < data[ key ].length; i++ )
+					{
+						var rectangleBackgroundVO:RectangleBackgroundVO = new RectangleBackgroundVO();
+						rectangleBackgroundVO.polygon = this.arrayToSimplePointVector( data[ key ][ i ].polygon as Array );
+						rectangleBackgroundVO.terrainTextureId = data[ key ][ i ].terrainTextureId;
+
+						levelData[ key ].push( rectangleBackgroundVO );
 					}
 				}
 				else if( levelData[ key ] is Vector.<SimplePoint> )

@@ -4,17 +4,15 @@
 package net.fpp.starlingtdleveleditor.controller.polygonbackground
 {
 	import flash.display.Sprite;
-	import flash.events.Event;
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
-
-	import net.fpp.starlingtowerdefense.game.module.background.terrainbackground.vo.TerrainTextureVO;
+	import net.fpp.starlingtowerdefense.game.module.background.polygonbackground.vo.PolygonBackgroundTerrainTextureVO;
 
 	public class PolygonBackgroundTerrainTextureView extends Sprite
 	{
-		private var _terrainTextureVO:TerrainTextureVO;
+		private var _terrainTextureVO:PolygonBackgroundTerrainTextureVO;
 
-		public function PolygonBackgroundTerrainTextureView( terrainTextureVO:TerrainTextureVO )
+		public function PolygonBackgroundTerrainTextureView( terrainTextureVO:PolygonBackgroundTerrainTextureVO )
 		{
 			this._terrainTextureVO = terrainTextureVO;
 
@@ -24,7 +22,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			this.addChild( StaticBitmapAssetManager.instance.getBitmap( this._terrainTextureVO.contentTextureId ) );
 		}
 
-		public function getTerrainTextureVO():TerrainTextureVO
+		public function getTerrainTextureVO():PolygonBackgroundTerrainTextureVO
 		{
 			return this._terrainTextureVO;
 		}
