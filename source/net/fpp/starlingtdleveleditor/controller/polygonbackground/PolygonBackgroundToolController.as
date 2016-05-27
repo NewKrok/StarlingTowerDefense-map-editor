@@ -4,6 +4,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.geom.Point;
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
 	import net.fpp.common.geom.SimplePoint;
@@ -31,6 +32,8 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 		private var _lastAddedNodeTime:Number = 0;
 		private var _lastSelectedPolygonIndex:int = 0;
 		private var _selectedPolygonView:PolygonView;
+		private var _draggedPolygonView:PolygonView;
+		private var _lastDragPolygonViewPoint:SimplePoint;
 
 		public function PolygonBackgroundToolController()
 		{
@@ -46,24 +49,43 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 		{
 			super.activate();
 
+			this.showNodePoints();
+
 			this._view.addEventListener( MouseEvent.CLICK, this.addPolygonRequest );
 			this._view.addEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
 			this._view.stage.addEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
 
-			this._view.addEventListener( MouseEvent.MOUSE_DOWN, this.onRouteMouseDown );
+			this._view.addEventListener( MouseEvent.MOUSE_DOWN, this.onPolygonMouseDown );
 		}
 
 		override public function deactivate():void
 		{
 			super.deactivate();
 
+			this.hideNodePoints();
 			this.closePolygonToolMenu();
 
 			this._view.removeEventListener( MouseEvent.CLICK, this.addPolygonRequest );
 			this._view.removeEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
 			this._view.stage.removeEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
 
-			this._view.removeEventListener( MouseEvent.MOUSE_DOWN, this.onRouteMouseDown );
+			this._view.removeEventListener( MouseEvent.MOUSE_DOWN, this.onPolygonMouseDown );
+		}
+
+		private function showNodePoints():void
+		{
+			for( var i:int = 0; i < this._polygonViews.length; i++ )
+			{
+				this._polygonViews[ i ].showNodePoints();
+			}
+		}
+
+		private function hideNodePoints():void
+		{
+			for( var i:int = 0; i < this._polygonViews.length; i++ )
+			{
+				this._polygonViews[ i ].hideNodePoints();
+			}
 		}
 
 		protected function onRouteMouseMove( e:MouseEvent ):void
@@ -72,9 +94,28 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			{
 				this.draw();
 			}
+			else if( this._lastDragPolygonViewPoint )
+			{
+				for( var i:int = 0; i < this._polygonViews.length; i++ )
+				{
+					if ( this._draggedPolygonView == this._polygonViews[ i ] )
+					{
+						for( var j:int = 0; j < this._polygonViews[ i ].polygonNodeViews.length; j++ )
+						{
+							var polygonNodeView:PolygonNodeView = this._polygonViews[ i ].polygonNodeViews[ j ];
+
+							polygonNodeView.x += this._view.mouseX - this._lastDragPolygonViewPoint.x;
+							polygonNodeView.y += this._view.mouseY - this._lastDragPolygonViewPoint.y;
+						}
+					}
+				}
+
+				this.draw();
+				this._lastDragPolygonViewPoint = new SimplePoint( this._view.mouseX, this._view.mouseY );
+			}
 		}
 
-		protected function onRouteMouseDown( e:MouseEvent ):void
+		protected function onPolygonMouseDown( e:MouseEvent ):void
 		{
 			if( e.target is PolygonNodeView )
 			{
@@ -82,6 +123,26 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 				this._draggedNode = e.target as PolygonNodeView;
 				( this._draggedNode as Sprite ).startDrag();
+
+				this.closePolygonToolMenu();
+			}
+			else
+			{
+				for( var i:int = 0; i < this._polygonViews.length; i++ )
+				{
+					if( ( e.target as Sprite ).parent.parent.parent == this._polygonViews[ i ] )
+					{
+						this.dispatchEvent( new ToolControllerEvent( ToolControllerEvent.MOUSE_ACTION_STARTED ) );
+
+						this._draggedPolygonView = this._polygonViews[ i ];
+
+						this._lastDragPolygonViewPoint = new SimplePoint( this._view.mouseX, this._view.mouseY );
+
+						this.closePolygonToolMenu();
+
+						break;
+					}
+				}
 			}
 		}
 
@@ -97,6 +158,10 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 				this.draw();
 
 				this._lastAddedNodeTime = new Date().time;
+			}
+			else if( this._lastDragPolygonViewPoint )
+			{
+				this._lastDragPolygonViewPoint = null;
 			}
 
 			this.dispatchEvent( new ToolControllerEvent( ToolControllerEvent.MOUSE_ACTION_STOPPED ) );
@@ -259,7 +324,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 			polygonView.addEventListener( MouseEvent.CLICK, onPolygonClickHandler );
 
-			this.addPolygonNodeViews( polygonView.polygonNodeViews, polygonView, polygon );
+			this.addPolygonNodeViews( polygonView.polygonNodeViews, polygonView.nodeContainer, polygon );
 		}
 
 		private function onPolygonClickHandler( e:MouseEvent ):void
@@ -347,12 +412,12 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 				this._polygonViews[ i ].graphics.endFill();
 
-				if( !(this._polygonViews[ i ].getChildAt( 0 ) is PolygonNodeView ) )
+				if( this._polygonViews[ i ].inGameGraphicsContainer.numChildren > 0 )
 				{
-					this._polygonViews[ i ].removeChildAt( 0 );
+					this._polygonViews[ i ].inGameGraphicsContainer.removeChildAt( 0 );
 				}
 
-				this._polygonViews[ i ].addChildAt( this.createIngameGraphics( points, this._polygonViews[ i ].terrainTextureVO ), 0 );
+				this._polygonViews[ i ].inGameGraphicsContainer.addChild( this.createIngameGraphics( points, this._polygonViews[ i ].terrainTextureVO ) );
 			}
 		}
 
@@ -371,10 +436,12 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		private function openPolygonToolMenu():void
 		{
-			this._view.addChild( this._polygonBackgroundToolMenu );
+			this._uiContainer.addChild( this._polygonBackgroundToolMenu );
 
-			this._polygonBackgroundToolMenu.x = this._view.mouseX;
-			this._polygonBackgroundToolMenu.y = this._view.mouseY;
+			var globalPoint:Point = this._view.localToGlobal( new Point( this._view.mouseX, this._view.mouseY ) );
+
+			this._polygonBackgroundToolMenu.x = globalPoint.x;
+			this._polygonBackgroundToolMenu.y = globalPoint.y;
 
 			this._polygonBackgroundToolMenu.addEventListener( PolygonBackgroundToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainTextureChangeRequestHandler );
 			this._polygonBackgroundToolMenu.addEventListener( PolygonBackgroundToolMenuEvent.BRING_FORWARD, this.onBringForwardPolyginRequestHandler );
@@ -390,7 +457,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			{
 				this._selectedPolygonView.unmark();
 
-				this._view.removeChild( this._polygonBackgroundToolMenu );
+				this._uiContainer.removeChild( this._polygonBackgroundToolMenu );
 
 				this._polygonBackgroundToolMenu.removeEventListener( PolygonBackgroundToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainTextureChangeRequestHandler );
 				this._polygonBackgroundToolMenu.removeEventListener( PolygonBackgroundToolMenuEvent.BRING_FORWARD, this.onBringForwardPolyginRequestHandler );

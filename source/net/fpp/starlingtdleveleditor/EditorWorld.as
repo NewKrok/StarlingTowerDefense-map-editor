@@ -97,9 +97,9 @@
 			if( toolController.isSelectable )
 			{
 				this._selectedToolControllerId = id;
-			}
 
-			this.deactivateAllToolController();
+				this.deactivateAllToolController();
+			}
 
 			toolController.activate();
 		}

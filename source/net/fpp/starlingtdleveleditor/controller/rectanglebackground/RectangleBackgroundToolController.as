@@ -32,7 +32,9 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 
 		private var _lastAddedNodeTime:Number = 0;
 		private var _lastSelectedRectangleIndex:int = 0;
-		private var _selectedPolygonView:RectangleView;
+		private var _selectedRectanglenView:RectangleView;
+		private var _draggedRectangleView:RectangleView;
+		private var _lastDragRectangleViewPoint:SimplePoint;
 
 		public function RectangleBackgroundToolController()
 		{
@@ -48,35 +50,122 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 		{
 			super.activate();
 
+			this.showNodePoints();
+
 			this._view.addEventListener( MouseEvent.CLICK, this.addRectangleRequest );
 			this._view.addEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
 			this._view.stage.addEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
 
-			this._view.addEventListener( MouseEvent.MOUSE_DOWN, this.onRouteMouseDown );
+			this._view.addEventListener( MouseEvent.MOUSE_DOWN, this.onRecangleMouseDown );
 		}
 
 		override public function deactivate():void
 		{
 			super.deactivate();
 
+			this.hideNodePoints();
 			this.closeRectangleToolMenu();
 
 			this._view.removeEventListener( MouseEvent.CLICK, this.addRectangleRequest );
 			this._view.removeEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
 			this._view.stage.removeEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
 
-			this._view.removeEventListener( MouseEvent.MOUSE_DOWN, this.onRouteMouseDown );
+			this._view.removeEventListener( MouseEvent.MOUSE_DOWN, this.onRecangleMouseDown );
+		}
+
+		private function showNodePoints():void
+		{
+			for( var i:int = 0; i < this._rectangleViews.length; i++ )
+			{
+				this._rectangleViews[ i ].showNodePoints();
+			}
+		}
+
+		private function hideNodePoints():void
+		{
+			for( var i:int = 0; i < this._rectangleViews.length; i++ )
+			{
+				this._rectangleViews[ i ].hideNodePoints();
+			}
 		}
 
 		protected function onRouteMouseMove( e:MouseEvent ):void
 		{
 			if( this._draggedNode )
 			{
+				this.updateNodePoints();
 				this.draw();
+			}
+			else if( this._lastDragRectangleViewPoint )
+			{
+				for( var i:int = 0; i < this._rectangleViews.length; i++ )
+				{
+					if( this._draggedRectangleView == this._rectangleViews[ i ] )
+					{
+						for( var j:int = 0; j < this._rectangleViews[ i ].rectangleNodeViews.length; j++ )
+						{
+							var rectangleNodeView:RectangleNodeView = this._rectangleViews[ i ].rectangleNodeViews[ j ];
+
+							rectangleNodeView.x += this._view.mouseX - this._lastDragRectangleViewPoint.x;
+							rectangleNodeView.y += this._view.mouseY - this._lastDragRectangleViewPoint.y;
+						}
+					}
+				}
+
+				this.draw();
+				this._lastDragRectangleViewPoint = new SimplePoint( this._view.mouseX, this._view.mouseY );
 			}
 		}
 
-		protected function onRouteMouseDown( e:MouseEvent ):void
+		private function updateNodePoints():void
+		{
+			var nodeCount:int = this._draggedRectangleView.rectangleNodeViews.length;
+
+			for( var i:int = 0; i < nodeCount; i++ )
+			{
+				var nodeView:RectangleNodeView = this._draggedRectangleView.rectangleNodeViews[ i ];
+
+				if( nodeView == this._draggedNode )
+				{
+					switch( i )
+					{
+						case 0:
+							var previousNodeView:RectangleNodeView = this._draggedRectangleView.rectangleNodeViews[ nodeCount - 1 ];
+							var nextNodeView:RectangleNodeView = this._draggedRectangleView.rectangleNodeViews[ i + 1 ];
+
+							previousNodeView.x = this._draggedNode.x;
+							nextNodeView.y = this._draggedNode.y;
+							break;
+
+						case 1:
+							previousNodeView = this._draggedRectangleView.rectangleNodeViews[ i - 1 ];
+							nextNodeView = this._draggedRectangleView.rectangleNodeViews[ i + 1 ];
+
+							previousNodeView.y = this._draggedNode.y;
+							nextNodeView.x = this._draggedNode.x;
+							break;
+
+						case 2:
+							previousNodeView = this._draggedRectangleView.rectangleNodeViews[ i - 1 ];
+							nextNodeView = this._draggedRectangleView.rectangleNodeViews[ i + 1 ];
+
+							previousNodeView.x = this._draggedNode.x;
+							nextNodeView.y = this._draggedNode.y;
+							break;
+
+						case 3:
+							previousNodeView = this._draggedRectangleView.rectangleNodeViews[ i - 1 ];
+							nextNodeView = this._draggedRectangleView.rectangleNodeViews[ 0 ];
+
+							previousNodeView.y = this._draggedNode.y;
+							nextNodeView.x = this._draggedNode.x;
+							break;
+					}
+				}
+			}
+		}
+
+		protected function onRecangleMouseDown( e:MouseEvent ):void
 		{
 			if( e.target is RectangleNodeView )
 			{
@@ -84,6 +173,36 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 
 				this._draggedNode = e.target as RectangleNodeView;
 				( this._draggedNode as Sprite ).startDrag();
+
+				this.closeRectangleToolMenu();
+
+				for( var i:int = 0; i < this._rectangleViews.length; i++ )
+				{
+					if( ( this._draggedNode as Sprite ).parent.parent == this._rectangleViews[ i ] )
+					{
+						this._draggedRectangleView = this._rectangleViews[ i ];
+
+						break;
+					}
+				}
+			}
+			else
+			{
+				for( i = 0; i < this._rectangleViews.length; i++ )
+				{
+					if( ( e.target as Sprite ).parent.parent == this._rectangleViews[ i ] )
+					{
+						this.dispatchEvent( new ToolControllerEvent( ToolControllerEvent.MOUSE_ACTION_STARTED ) );
+
+						this._draggedRectangleView = this._rectangleViews[ i ];
+
+						this._lastDragRectangleViewPoint = new SimplePoint( this._view.mouseX, this._view.mouseY );
+
+						this.closeRectangleToolMenu();
+
+						break;
+					}
+				}
 			}
 		}
 
@@ -97,6 +216,10 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 				this.draw();
 
 				this._lastAddedNodeTime = new Date().time;
+			}
+			else if( this._lastDragRectangleViewPoint )
+			{
+				this._lastDragRectangleViewPoint = null;
 			}
 
 			this.dispatchEvent( new ToolControllerEvent( ToolControllerEvent.MOUSE_ACTION_STOPPED ) );
@@ -175,7 +298,7 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 
 			rectangleView.addEventListener( MouseEvent.CLICK, onPolygonClickHandler );
 
-			this.addRectangleNodeViews( rectangleView.rectangleNodeViews, rectangleView, polygon );
+			this.addRectangleNodeViews( rectangleView.rectangleNodeViews, rectangleView.nodeContainer, polygon );
 		}
 
 		private function onPolygonClickHandler( e:MouseEvent ):void
@@ -185,15 +308,15 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 				return;
 			}
 
-			if( this._selectedPolygonView )
+			if( this._selectedRectanglenView )
 			{
-				this._selectedPolygonView.unmark();
+				this._selectedRectanglenView.unmark();
 			}
 
-			this._selectedPolygonView = e.currentTarget as RectangleView;
-			this._selectedPolygonView.mark();
+			this._selectedRectanglenView = e.currentTarget as RectangleView;
+			this._selectedRectanglenView.mark();
 
-			this._lastSelectedRectangleIndex = this._rectangleViewContainer.getChildIndex( this._selectedPolygonView );
+			this._lastSelectedRectangleIndex = this._rectangleViewContainer.getChildIndex( this._selectedRectanglenView );
 
 			this.openRectangleToolMenu();
 		}
@@ -258,12 +381,12 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 				this._rectangleViews[ i ].graphics.lineTo( polygon[ 0 ].x, polygon[ 0 ].y );
 				this._rectangleViews[ i ].graphics.endFill();
 
-				if( !(this._rectangleViews[ i ].getChildAt( 0 ) is RectangleNodeView ) )
+				if( this._rectangleViews[ i ].inGameGraphicsContainer.numChildren > 0 )
 				{
-					this._rectangleViews[ i ].removeChildAt( 0 );
+					this._rectangleViews[ i ].inGameGraphicsContainer.removeChildAt( 0 );
 				}
 
-				this._rectangleViews[ i ].addChildAt( this.createIngameGraphics( points, this._rectangleViews[ i ].terrainTextureVO ), 0 );
+				this._rectangleViews[ i ].inGameGraphicsContainer.addChild( this.createIngameGraphics( points, this._rectangleViews[ i ].terrainTextureVO ) );
 			}
 		}
 
@@ -284,10 +407,12 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 
 		private function openRectangleToolMenu():void
 		{
-			this._view.addChild( this._rectangleBackgroundToolMenu );
+			this._uiContainer.addChild( this._rectangleBackgroundToolMenu );
 
-			this._rectangleBackgroundToolMenu.x = this._view.mouseX;
-			this._rectangleBackgroundToolMenu.y = this._view.mouseY;
+			var globalPoint:Point = this._view.localToGlobal( new Point( this._view.mouseX, this._view.mouseY ) );
+
+			this._rectangleBackgroundToolMenu.x = globalPoint.x;
+			this._rectangleBackgroundToolMenu.y = globalPoint.y;
 
 			this._rectangleBackgroundToolMenu.addEventListener( RectangleBackgroundToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainTextureChangeRequestHandler );
 			this._rectangleBackgroundToolMenu.addEventListener( RectangleBackgroundToolMenuEvent.BRING_FORWARD, this.onBringForwardRectangleRequestHandler );
@@ -301,9 +426,9 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 		{
 			if( this._rectangleBackgroundToolMenu.parent )
 			{
-				this._selectedPolygonView.unmark();
+				this._selectedRectanglenView.unmark();
 
-				this._view.removeChild( this._rectangleBackgroundToolMenu );
+				this._uiContainer.removeChild( this._rectangleBackgroundToolMenu );
 
 				this._rectangleBackgroundToolMenu.removeEventListener( RectangleBackgroundToolMenuEvent.CHANGE_TERRAIN_TEXTURE_REQUEST, this.onTerrainTextureChangeRequestHandler );
 				this._rectangleBackgroundToolMenu.removeEventListener( RectangleBackgroundToolMenuEvent.BRING_FORWARD, this.onBringForwardRectangleRequestHandler );
@@ -374,7 +499,7 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 
 		override public function setLevelDataVO( levelDataVO:LevelDataVO ):void
 		{
-			if ( !levelDataVO.rectangleBackgroundData )
+			if( !levelDataVO.rectangleBackgroundData )
 			{
 				return;
 			}

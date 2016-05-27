@@ -9,7 +9,6 @@
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
 	import net.fpp.common.static.FPPContextMenu;
-	import net.fpp.starlingtdleveleditor.EditorLibrary;
 	import net.fpp.starlingtdleveleditor.EditorWorld;
 	import net.fpp.starlingtdleveleditor.Menu;
 	import net.fpp.starlingtdleveleditor.config.ToolConfig;
@@ -47,9 +46,9 @@
 			this.createTools();
 
 			/*this._editorLibrary = new EditorLibrary();
-			this._editorLibrary.addEventListener( EditorLibraryEvent.OPEN_REQUEST, onEditorLibraryOpenHandler )
-			this._editorLibrary.addEventListener( EditorLibraryEvent.ADD_ELEMENT_TO_WORLD_REQUEST, onAddelementToWorldRequestHandler )
-			this.addChild( this._editorLibrary );*/
+			 this._editorLibrary.addEventListener( EditorLibraryEvent.OPEN_REQUEST, onEditorLibraryOpenHandler )
+			 this._editorLibrary.addEventListener( EditorLibraryEvent.ADD_ELEMENT_TO_WORLD_REQUEST, onAddelementToWorldRequestHandler )
+			 this.addChild( this._editorLibrary );*/
 		}
 
 		private function createTools():void

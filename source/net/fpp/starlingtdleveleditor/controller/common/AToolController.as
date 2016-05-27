@@ -74,6 +74,7 @@ package net.fpp.starlingtdleveleditor.controller.common
 			if( this._view )
 			{
 				this._view.mouseEnabled = value;
+				this._view.mouseChildren = value;
 			}
 		}
 
@@ -82,6 +83,8 @@ package net.fpp.starlingtdleveleditor.controller.common
 			this._view = value;
 
 			this._view.mouseEnabled = this._mouseEnabled;
+			this._view.mouseChildren = this._mouseEnabled;
+
 			this._view.stage.addEventListener( Event.RESIZE, this.onStageResizeHandler );
 
 			this.viewContainerInited();
