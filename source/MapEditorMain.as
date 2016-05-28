@@ -21,7 +21,6 @@
 		private var _editorMain:EditorWorld;
 
 		private var _menu:Menu;
-		//private var _editorLibrary:EditorLibrary;
 
 		public function MapEditorMain()
 		{
@@ -44,11 +43,6 @@
 			this.addChild( this._menu = new Menu );
 
 			this.createTools();
-
-			/*this._editorLibrary = new EditorLibrary();
-			 this._editorLibrary.addEventListener( EditorLibraryEvent.OPEN_REQUEST, onEditorLibraryOpenHandler )
-			 this._editorLibrary.addEventListener( EditorLibraryEvent.ADD_ELEMENT_TO_WORLD_REQUEST, onAddelementToWorldRequestHandler )
-			 this.addChild( this._editorLibrary );*/
 		}
 
 		private function createTools():void
@@ -74,19 +68,5 @@
 		{
 			this._editorMain.selectToolController( e.id );
 		}
-
-		/*
-		 private function closeEditorLibrary():void
-		 {
-		 if( this._editorLibrary )
-		 {
-		 this._editorLibrary.closeLibrary();
-		 }
-		 }
-
-		 private function onAddelementToWorldRequestHandler( e:EditorLibraryEvent ):void
-		 {
-		 this._editorMain.addLibraryElement( e.libraryElementVO );
-		 }*/
 	}
 }

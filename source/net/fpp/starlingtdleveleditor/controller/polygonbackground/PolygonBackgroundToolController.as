@@ -169,6 +169,11 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		private function isPolygonToolMenuClicked( e:MouseEvent ):Boolean
 		{
+			if ( !this._polygonBackgroundToolMenu.parent )
+			{
+				return false;
+			}
+
 			var mouseX:Number = e.currentTarget.mouseX;
 			var mouseY:Number = e.currentTarget.mouseY;
 

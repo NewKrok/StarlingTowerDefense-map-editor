@@ -4,6 +4,7 @@
 package net.fpp.starlingtdleveleditor.config
 {
 	import net.fpp.starlingtdleveleditor.constant.CToolId;
+	import net.fpp.starlingtdleveleditor.controller.enemypath.EnemyPathToolController;
 	import net.fpp.starlingtdleveleditor.controller.exportlevel.ExportToolController;
 	import net.fpp.starlingtdleveleditor.controller.importlevel.ImportToolController;
 	import net.fpp.starlingtdleveleditor.controller.polygonbackground.PolygonBackgroundToolController;
@@ -20,7 +21,8 @@ package net.fpp.starlingtdleveleditor.config
 			new ToolConfigVO( CToolId.ZOOM_IN, 'Zoom In', 'ZoomInButtonIcon', ZoomInToolController, false ),
 			new ToolConfigVO( CToolId.ZOOM_OUT, 'Zoom Out', 'ZoomOutButtonIcon', ZoomOutToolController, false ),
 			new ToolConfigVO( CToolId.RECTANGLE_BACKGROUND, 'Rectangle Background', 'RectangleBackgroundButtonIcon', RectangleBackgroundToolController, true ),
-			new ToolConfigVO( CToolId.POLYGON_BACKGROUND, 'Polygon Background', 'PolygonBackgroundButtonIcon', PolygonBackgroundToolController, true )
+			new ToolConfigVO( CToolId.POLYGON_BACKGROUND, 'Polygon Background', 'PolygonBackgroundButtonIcon', PolygonBackgroundToolController, true ),
+			new ToolConfigVO( CToolId.ENEMY_PATH, 'Enemy Path', 'PolygonBackgroundButtonIcon', EnemyPathToolController, true )
 		];
 	}
 }

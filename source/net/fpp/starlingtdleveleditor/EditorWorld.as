@@ -34,19 +34,22 @@
 
 		public function EditorWorld()
 		{
-			this.addChild( this._bluePrintBackground = new BluePrintBackground );
+			this._bluePrintBackground = new BluePrintBackground;
+			this.addChild( this._bluePrintBackground );
 
 			this.addChild( this._mainContainer = new Sprite() );
 			this._mainContainer.addEventListener( Event.RESIZE, this.onResizeHandler );
 
 			this._mainContainer.addChild( this._editorMainBackground = new EditorMainBackground() );
 
-			this.addChild( this._uiContainer = new Sprite() );
+			this._uiContainer = new Sprite();
+			this.addChild( this._uiContainer );
 
-			this._uiContainer.addChild( this._zoomView = new ZoomView() );
+			this._zoomView = new ZoomView();
 			this._zoomView.buttonMode = true;
 			this._zoomView.mouseChildren = false;
 			this._zoomView.addEventListener( MouseEvent.CLICK, onZoomViewDoubleClickHandler );
+			this._uiContainer.addChild( this._zoomView );
 		}
 
 		private function onZoomViewDoubleClickHandler( e:MouseEvent ):void

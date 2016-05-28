@@ -11,5 +11,6 @@ package net.fpp.starlingtdleveleditor.constant
 		public static const ZOOM_OUT:String = 'CToolId.ZOOM_OUT';
 		public static const POLYGON_BACKGROUND:String = 'CToolId.POLYGON_BACKGROUND';
 		public static const RECTANGLE_BACKGROUND:String = 'CToolId.RECTANGLE_BACKGROUND';
+		public static const ENEMY_PATH:String = 'CToolId.ENEMY_PATH';
 	}
 }

@@ -227,6 +227,11 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 
 		private function isRectangleToolMenuClicked( e:MouseEvent ):Boolean
 		{
+			if ( !this._rectangleBackgroundToolMenu.parent )
+			{
+				return false;
+			}
+
 			var mouseX:Number = e.currentTarget.mouseX;
 			var mouseY:Number = e.currentTarget.mouseY;
 
