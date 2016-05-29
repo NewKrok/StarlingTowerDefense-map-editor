@@ -67,6 +67,7 @@ package net.fpp.starlingtdleveleditor
 					25
 			);
 
+			button.tabEnabled = false;
 			button.isSelectable = isSelectable;
 			button.data = id;
 			button.addEventListener( MouseEvent.CLICK, this.onButtonClickedHandler );

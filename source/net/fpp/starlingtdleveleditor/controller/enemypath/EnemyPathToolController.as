@@ -7,6 +7,7 @@ package net.fpp.starlingtdleveleditor.controller.enemypath
 	import flash.events.MouseEvent;
 
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
+	import net.fpp.starlingtdleveleditor.controller.enemypath.events.EnemyPathToolMenuEvent;
 
 	public class EnemyPathToolController extends AToolController
 	{
@@ -28,6 +29,7 @@ package net.fpp.starlingtdleveleditor.controller.enemypath
 
 			this._uiContainer.stage.addEventListener( Event.RESIZE, onStageResizeHandler );
 			this._view.addEventListener( MouseEvent.CLICK, this.addEnemyPathRequest );
+			this._enemyPathToolMenu.addEventListener( EnemyPathToolMenuEvent.REMOVE_REQUEST, this.removeEnemyPathRequestHandler );
 
 			this.rePositionEnemyPathToolMenu();
 		}
@@ -60,13 +62,47 @@ package net.fpp.starlingtdleveleditor.controller.enemypath
 		private function addEnemyPathRequest( e:MouseEvent ):void
 		{
 			var enemyPathVO:EnemyPathVO = new EnemyPathVO;
-			enemyPathVO.name = 'EnemyPath' + this._enemyPathIndex++;
+			enemyPathVO.name = this.calculateNextEnemyPathName();
 
 			this._enemyPaths.push( enemyPathVO );
 
+			this.updateEnemyPathToolMenu();
+		}
+
+		private function calculateNextEnemyPathName():String
+		{
+			var result:String = 'EnemyPath' + this._enemyPathIndex++;
+
+			for ( var i:int = 0; i < this._enemyPaths.length; i++ )
+			{
+				if ( this._enemyPaths[i].name == result )
+				{
+					result = 'EnemyPath' + this._enemyPathIndex++;
+				}
+			}
+
+			return result;
+		}
+
+		private function updateEnemyPathToolMenu():void
+		{
 			this._enemyPathToolMenu.setEnemyPaths( this._enemyPaths );
 
 			this.rePositionEnemyPathToolMenu();
+		}
+
+		private function removeEnemyPathRequestHandler( e:EnemyPathToolMenuEvent ):void
+		{
+			for ( var i:int = 0; i < this._enemyPaths.length; i++ )
+			{
+				if ( this._enemyPaths[i] == e.data )
+				{
+					this._enemyPaths.splice( i, 1 );
+					break;
+				}
+			}
+
+			this.updateEnemyPathToolMenu();
 		}
 	}
 }

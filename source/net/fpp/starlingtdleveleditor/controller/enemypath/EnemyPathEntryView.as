@@ -3,33 +3,62 @@
  */
 package net.fpp.starlingtdleveleditor.controller.enemypath
 {
+	import flash.events.Event;
+	import flash.events.FocusEvent;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFieldType;
 	import flash.text.TextFormat;
+	import flash.text.TextFormatAlign;
+	import flash.ui.Keyboard;
 
-	import net.fpp.common.display.UIBox;
+	import net.fpp.common.display.HUIBox;
 	import net.fpp.starlingtdleveleditor.assets.skin.CSkinAsset;
 	import net.fpp.starlingtdleveleditor.assets.skin.SkinManager;
 	import net.fpp.starlingtdleveleditor.component.Button;
+	import net.fpp.starlingtdleveleditor.controller.enemypath.events.EnemyPathToolMenuEvent;
 
-	public class EnemyPathEntryView extends UIBox
+	public class EnemyPathEntryView extends HUIBox
 	{
-		private var _enemyPathVO:EnemyPathVO;
+		public var enemyPathVO:EnemyPathVO;
 
 		private var _textField:TextField;
-		private var _renameButton:Button;
 		private var _removeButton:Button;
 
 		public function EnemyPathEntryView( enemyPathVO:EnemyPathVO )
 		{
-			this._enemyPathVO = enemyPathVO;
+			this.enemyPathVO = enemyPathVO;
 
-			this.orderType = HORIZONTAL_ORDER;
+			this.verticalAlign = VERTICAL_ALIGN_MIDDLE;
 			this.gap = 5;
 
-			this.createTitle();
-			this.createRenameButton();
 			this.createRemoveButton();
+			this._removeButton.addEventListener( MouseEvent.CLICK, this.onClickOnRemoveButtonHandler );
+
+			this.createTitle();
+			this._textField.addEventListener( MouseEvent.CLICK, this.onClickOnTextFieldHandler );
+			this._textField.addEventListener( Event.CHANGE, this.onChangeOnTextFieldHandler );
+			this._textField.addEventListener( FocusEvent.FOCUS_OUT, this.onFocusOutTextFieldHandler );
+			this._textField.addEventListener( KeyboardEvent.KEY_UP, this.onKeyUpOnTextFieldHandler );
+		}
+
+		private function createRemoveButton():void
+		{
+			this._removeButton = new Button(
+					SkinManager.getSkin( CSkinAsset.BUTTON_NORMAL_STATE ),
+					SkinManager.getSkin( CSkinAsset.BUTTON_OVER_STATE ),
+					'X'
+			);
+			this._removeButton.tabEnabled = false;
+			this._removeButton.width = 20;
+			this.addChild( this._removeButton );
+		}
+
+		private function onClickOnRemoveButtonHandler( e:MouseEvent ):void
+		{
+			this.dispatchEvent( new EnemyPathToolMenuEvent( EnemyPathToolMenuEvent.REMOVE_REQUEST, this.enemyPathVO ) );
 		}
 
 		private function createTitle():void
@@ -40,36 +69,58 @@ package net.fpp.starlingtdleveleditor.controller.enemypath
 			textFormat.size = 11;
 			textFormat.color = 0x0;
 			textFormat.font = 'Verdana';
+			textFormat.align = TextFormatAlign.LEFT;
 
 			this._textField.defaultTextFormat = textFormat;
 
-			this._textField.mouseEnabled = false;
 			this._textField.autoSize = TextFieldAutoSize.LEFT;
-			this._textField.text = this._enemyPathVO.name;
+			this._textField.text = this.enemyPathVO.name;
+			this._textField.type = TextFieldType.INPUT;
+			this._textField.background = true;
+			this._textField.restrict = 'A-Za-z0-9';
+			this._textField.maxChars = 20;
 
 			this.addChild( this._textField );
 		}
 
-		private function createRenameButton():void
+		private function onClickOnTextFieldHandler( e:MouseEvent ):void
 		{
-			this._renameButton = new Button(
-					SkinManager.getSkin( CSkinAsset.BUTTON_NORMAL_STATE ),
-					SkinManager.getSkin( CSkinAsset.BUTTON_OVER_STATE ),
-					'RENAME'
-			);
-			this._renameButton.width = 75;
-			this.addChild( this._renameButton );
+			this.selectTextField();
 		}
 
-		private function createRemoveButton():void
+		private function selectTextField():void
 		{
-			this._removeButton = new Button(
-					SkinManager.getSkin( CSkinAsset.BUTTON_NORMAL_STATE ),
-					SkinManager.getSkin( CSkinAsset.BUTTON_OVER_STATE ),
-					'X'
-			);
-			this._removeButton.width = 20;
-			this.addChild( this._removeButton );
+			this._textField.setSelection( 0, this._textField.length );
+		}
+
+		private function onFocusOutTextFieldHandler( e:FocusEvent ):void
+		{
+			this.rename();
+		}
+
+		private function onChangeOnTextFieldHandler( e:Event ):void
+		{
+			this.dispatchEvent( new EnemyPathToolMenuEvent( EnemyPathToolMenuEvent.RESIZE_REQUEST ) );
+		}
+
+		private function onKeyUpOnTextFieldHandler( e:KeyboardEvent ):void
+		{
+			if( e.charCode == Keyboard.ENTER )
+			{
+				this.rename();
+			}
+		}
+
+		private function rename():void
+		{
+			this.dispatchEvent( new EnemyPathToolMenuEvent( EnemyPathToolMenuEvent.RENAME_REQUEST, this._textField.text ) );
+		}
+
+		public function refreshView():void
+		{
+			this._textField.text = this.enemyPathVO.name;
+
+			this.selectTextField();
 		}
 	}
 }
