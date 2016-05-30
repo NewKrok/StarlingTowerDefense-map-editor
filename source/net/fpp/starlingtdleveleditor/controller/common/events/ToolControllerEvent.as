@@ -13,7 +13,11 @@ package net.fpp.starlingtdleveleditor.controller.common.events
 		public function ToolControllerEvent( type:String ):void
 		{
 			super( type );
+		}
 
+		override public function clone():Event
+		{
+			return new ToolControllerEvent( type );
 		}
 	}
 }

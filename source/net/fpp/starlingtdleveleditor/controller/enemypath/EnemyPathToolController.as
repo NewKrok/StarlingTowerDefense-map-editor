@@ -6,13 +6,17 @@ package net.fpp.starlingtdleveleditor.controller.enemypath
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 
+	import net.fpp.common.geom.SimplePoint;
+
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
+	import net.fpp.starlingtdleveleditor.controller.common.events.ToolControllerEvent;
 	import net.fpp.starlingtdleveleditor.controller.enemypath.events.EnemyPathToolMenuEvent;
 
 	public class EnemyPathToolController extends AToolController
 	{
 		private var _enemyPathToolMenu:EnemyPathToolMenu;
 		private var _enemyPaths:Vector.<EnemyPathVO> = new <EnemyPathVO>[];
+		private var _enemyPathViews:Vector.<EnemyPathView> = new <EnemyPathView>[];
 		private var _enemyPathIndex:int = 0;
 
 		public function EnemyPathToolController()
@@ -63,10 +67,33 @@ package net.fpp.starlingtdleveleditor.controller.enemypath
 		{
 			var enemyPathVO:EnemyPathVO = new EnemyPathVO;
 			enemyPathVO.name = this.calculateNextEnemyPathName();
+			enemyPathVO.points = new <SimplePoint>[
+				new SimplePoint( this._view.mouseX, this._view.mouseY ),
+				new SimplePoint( this._view.mouseX + 100, this._view.mouseY ),
+				new SimplePoint( this._view.mouseX + 200, this._view.mouseY ),
+				new SimplePoint( this._view.mouseX + 300, this._view.mouseY )
+			];
 
 			this._enemyPaths.push( enemyPathVO );
 
+			var enemyPathView:EnemyPathView = new EnemyPathView( enemyPathVO );
+			enemyPathView.addEventListener( ToolControllerEvent.MOUSE_ACTION_STARTED, this.onMouseActionStartedHandler );
+			enemyPathView.addEventListener( ToolControllerEvent.MOUSE_ACTION_STOPPED, this.onMouseActionStoppedHandler );
+			this._view.addChild( enemyPathView );
+			this._enemyPathViews.push( enemyPathView )
+
+			this.updateEnemyPathViews();
 			this.updateEnemyPathToolMenu();
+		}
+
+		private function onMouseActionStartedHandler( e:ToolControllerEvent ):void
+		{
+			this.dispatchEvent( e );
+		}
+
+		private function onMouseActionStoppedHandler( e:ToolControllerEvent ):void
+		{
+			this.dispatchEvent( e );
 		}
 
 		private function calculateNextEnemyPathName():String
@@ -98,11 +125,25 @@ package net.fpp.starlingtdleveleditor.controller.enemypath
 				if ( this._enemyPaths[i] == e.data )
 				{
 					this._enemyPaths.splice( i, 1 );
+
+					this._view.removeChild( this._enemyPathViews[i] );
+					this._enemyPathViews[i].dispose();
+					this._enemyPathViews[i] = null;
+					this._enemyPathViews.splice( i, 1 );
 					break;
 				}
 			}
 
+			this.updateEnemyPathViews();
 			this.updateEnemyPathToolMenu();
+		}
+
+		private function updateEnemyPathViews():void
+		{
+			for ( var i:int = 0; i < this._enemyPathViews.length; i++ )
+			{
+				this._enemyPathViews[i].draw();
+			}
 		}
 	}
 }

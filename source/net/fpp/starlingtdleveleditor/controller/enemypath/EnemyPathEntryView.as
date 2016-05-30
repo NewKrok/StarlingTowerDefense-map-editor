@@ -53,6 +53,7 @@ package net.fpp.starlingtdleveleditor.controller.enemypath
 			);
 			this._removeButton.tabEnabled = false;
 			this._removeButton.width = 20;
+			this._removeButton.height = 20;
 			this.addChild( this._removeButton );
 		}
 
