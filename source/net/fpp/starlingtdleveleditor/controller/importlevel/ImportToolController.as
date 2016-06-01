@@ -3,13 +3,13 @@
  */
 package net.fpp.starlingtdleveleditor.controller.importlevel
 {
-	import avmplus.getQualifiedClassName;
-
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 
 	import net.fpp.common.geom.SimplePoint;
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
+	import net.fpp.starlingtowerdefense.vo.EnemyPathDataVO;
+	import net.fpp.starlingtowerdefense.vo.EnemyPathPointVO;
 	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
 	import net.fpp.starlingtowerdefense.vo.PolygonBackgroundVO;
 	import net.fpp.starlingtowerdefense.vo.RectangleBackgroundVO;
@@ -68,7 +68,7 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 		{
 			var data:String = _dialog.inputText.text;
 
-			if ( data == '' )
+			if( data == '' )
 			{
 				return;
 			}
@@ -78,9 +78,9 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 			try
 			{
 				levelDataVO = convertJSONDataToLevelData( JSON.parse( data ) );
-			} catch( e:Error )
+			}catch( e:Error )
 			{
-				_dialog.inputText.text = e.message;
+				_dialog.inputText.text = e.getStackTrace();
 				return;
 			}
 
@@ -128,6 +128,25 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 						rectangleBackgroundVO.terrainTextureId = data[ key ][ i ].terrainTextureId;
 
 						levelData[ key ].push( rectangleBackgroundVO );
+					}
+				}
+				else if( levelData[ key ] is Vector.<EnemyPathDataVO> )
+				{
+					levelData[ key ] = new Vector.<EnemyPathDataVO>;
+
+					for( i = 0; i < data[ key ].length; i++ )
+					{
+						var enemyPathDataVO:EnemyPathDataVO = new EnemyPathDataVO();
+						enemyPathDataVO.id = data[ key ][ i ].id;
+						enemyPathDataVO.enemyPathPoints = new <EnemyPathPointVO>[];
+
+						for( var j:int = 0; j < data[ key ][ i ].enemyPathPoints.length; j++ )
+						{
+							var enemyPathPointData:Object = data[ key ][ i ].enemyPathPoints[ j ];
+							enemyPathDataVO.enemyPathPoints.push( new EnemyPathPointVO( enemyPathPointData.radius, new SimplePoint( enemyPathPointData.point.x, enemyPathPointData.point.y ) ) );
+						}
+
+						levelData[ key ].push( enemyPathDataVO );
 					}
 				}
 				else if( levelData[ key ] is Vector.<SimplePoint> )
