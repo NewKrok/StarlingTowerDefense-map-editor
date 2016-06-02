@@ -11,10 +11,11 @@
 	import net.fpp.common.static.FPPContextMenu;
 	import net.fpp.starlingtdleveleditor.EditorWorld;
 	import net.fpp.starlingtdleveleditor.Menu;
+	import net.fpp.starlingtdleveleditor.config.IToolConfig;
 	import net.fpp.starlingtdleveleditor.config.ToolConfig;
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
 	import net.fpp.starlingtdleveleditor.events.MenuEvent;
-	import net.fpp.starlingtdleveleditor.vo.ToolConfigVO;
+	import net.fpp.starlingtdleveleditor.config.vo.ToolConfigVO;
 
 	public class MapEditorMain extends Sprite
 	{
@@ -59,6 +60,7 @@
 				var toolController:AToolController = new config.toolControllerClass();
 				toolController.id = config.id;
 				toolController.isSelectable = config.isSelectable;
+				toolController.toolConfig = config.toolConfig;
 
 				this._editorMain.registerToolController( config.id, toolController );
 			}

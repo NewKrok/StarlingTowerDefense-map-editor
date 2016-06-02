@@ -5,14 +5,13 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.utils.getQualifiedClassName;
 
-	import net.fpp.common.geom.SimplePoint;
+	import net.fpp.starlingtdleveleditor.config.ImportParserConfig;
+	import net.fpp.starlingtdleveleditor.config.vo.ImportParserConfigVO;
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
-	import net.fpp.starlingtowerdefense.vo.EnemyPathDataVO;
-	import net.fpp.starlingtowerdefense.vo.EnemyPathPointVO;
+	import net.fpp.starlingtdleveleditor.parser.IParser;
 	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
-	import net.fpp.starlingtowerdefense.vo.PolygonBackgroundVO;
-	import net.fpp.starlingtowerdefense.vo.RectangleBackgroundVO;
 
 	public class ImportToolController extends AToolController
 	{
@@ -21,10 +20,13 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 
 		private var _container:Sprite;
 
+		private var _importParserConfig:ImportParserConfig;
+
 		override protected function uiContainerInited():void
 		{
-			this.build();
+			this._importParserConfig = this.toolConfig as ImportParserConfig;
 
+			this.build();
 			this.hide();
 		}
 
@@ -77,7 +79,7 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 
 			try
 			{
-				levelDataVO = convertJSONDataToLevelData( JSON.parse( data ) );
+				levelDataVO = this.convertJSONDataToLevelData( JSON.parse( data ) );
 			}catch( e:Error )
 			{
 				_dialog.inputText.text = e.getStackTrace();
@@ -97,77 +99,33 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 			this.deactivate();
 		}
 
-		protected function convertJSONDataToLevelData( data:Object ):LevelDataVO
+		private function convertJSONDataToLevelData( data:Object ):LevelDataVO
 		{
 			var levelData:LevelDataVO = new LevelDataVO;
 			levelData.createEmptyDatas();
 
 			for( var key:String in data )
 			{
-				if( levelData[ key ] is Vector.<PolygonBackgroundVO> )
-				{
-					levelData[ key ] = new Vector.<PolygonBackgroundVO>;
-
-					for( var i:int = 0; i < data[ key ].length; i++ )
-					{
-						var polygonBackgroundVO:PolygonBackgroundVO = new PolygonBackgroundVO();
-						polygonBackgroundVO.polygon = this.arrayToSimplePointVector( data[ key ][ i ].polygon as Array );
-						polygonBackgroundVO.terrainTextureId = data[ key ][ i ].terrainTextureId;
-
-						levelData[ key ].push( polygonBackgroundVO );
-					}
-				}
-				else if( levelData[ key ] is Vector.<RectangleBackgroundVO> )
-				{
-					levelData[ key ] = new Vector.<RectangleBackgroundVO>;
-
-					for( i = 0; i < data[ key ].length; i++ )
-					{
-						var rectangleBackgroundVO:RectangleBackgroundVO = new RectangleBackgroundVO();
-						rectangleBackgroundVO.polygon = this.arrayToSimplePointVector( data[ key ][ i ].polygon as Array );
-						rectangleBackgroundVO.terrainTextureId = data[ key ][ i ].terrainTextureId;
-
-						levelData[ key ].push( rectangleBackgroundVO );
-					}
-				}
-				else if( levelData[ key ] is Vector.<EnemyPathDataVO> )
-				{
-					levelData[ key ] = new Vector.<EnemyPathDataVO>;
-
-					for( i = 0; i < data[ key ].length; i++ )
-					{
-						var enemyPathDataVO:EnemyPathDataVO = new EnemyPathDataVO();
-						enemyPathDataVO.id = data[ key ][ i ].id;
-						enemyPathDataVO.enemyPathPoints = new <EnemyPathPointVO>[];
-
-						for( var j:int = 0; j < data[ key ][ i ].enemyPathPoints.length; j++ )
-						{
-							var enemyPathPointData:Object = data[ key ][ i ].enemyPathPoints[ j ];
-							enemyPathDataVO.enemyPathPoints.push( new EnemyPathPointVO( enemyPathPointData.radius, new SimplePoint( enemyPathPointData.point.x, enemyPathPointData.point.y ) ) );
-						}
-
-						levelData[ key ].push( enemyPathDataVO );
-					}
-				}
-				else if( levelData[ key ] is Vector.<SimplePoint> )
-				{
-					levelData[ key ] = this.arrayToSimplePointVector( data[ key ] );
-				}
+				levelData[ key ] = this.parse( data[ key ], levelData[ key ] );
 			}
 
 			return levelData;
 		}
 
-		private function arrayToSimplePointVector( array:Array ):Vector.<SimplePoint>
+		private function parse( source:Object, target:Object ):Object
 		{
-			var simplePointVector:Vector.<SimplePoint> = new <SimplePoint>[];
-
-			for( var i:int = 0; i < array.length; i++ )
+			for( var i:int = 0; i < this._importParserConfig.rule.length; i++ )
 			{
-				simplePointVector.push( new SimplePoint( array[ i ].x, array[ i ].y ) );
+				var rule:ImportParserConfigVO = this._importParserConfig.rule[ i ];
+
+				if( getQualifiedClassName( rule.entryType ) == getQualifiedClassName( target ) )
+				{
+					var parser:IParser = new rule.parserClass();
+					return parser.parse( source );
+				}
 			}
 
-			return simplePointVector;
+			return null;
 		}
 
 		public function show():void

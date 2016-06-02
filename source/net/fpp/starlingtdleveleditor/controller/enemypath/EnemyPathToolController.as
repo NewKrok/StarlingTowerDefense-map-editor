@@ -171,21 +171,26 @@ package net.fpp.starlingtdleveleditor.controller.enemypath
 
 		override public function setLevelDataVO( levelDataVO:LevelDataVO ):void
 		{
-			for ( var i:int = 0; i < levelDataVO.enemyPathData.length; i++ )
+			if( !levelDataVO.enemyPathData )
 			{
-				var enemyPathDataVO:EnemyPathDataVO = levelDataVO.enemyPathData[i];
+				return
+			}
+
+			for( var i:int = 0; i < levelDataVO.enemyPathData.length; i++ )
+			{
+				var enemyPathDataVO:EnemyPathDataVO = levelDataVO.enemyPathData[ i ];
 
 				var points:Vector.<SimplePoint> = new <SimplePoint>[];
 				var radiuses:Vector.<Number> = new <Number>[];
 
-				for ( var j:int = 0; j < enemyPathDataVO.enemyPathPoints.length; j++ )
+				for( var j:int = 0; j < enemyPathDataVO.enemyPathPoints.length; j++ )
 				{
-					points.push( new SimplePoint( enemyPathDataVO.enemyPathPoints[j].point.x, enemyPathDataVO.enemyPathPoints[j].point.y ) );
-					radiuses.push( enemyPathDataVO.enemyPathPoints[j].radius );
+					points.push( new SimplePoint( enemyPathDataVO.enemyPathPoints[ j ].point.x, enemyPathDataVO.enemyPathPoints[ j ].point.y ) );
+					radiuses.push( enemyPathDataVO.enemyPathPoints[ j ].radius );
 				}
 
 				this.addEnemyPath( points, radiuses );
-				this._enemyPaths[this._enemyPaths.length - 1].name = enemyPathDataVO.id;
+				this._enemyPaths[ this._enemyPaths.length - 1 ].name = enemyPathDataVO.id;
 			}
 
 			this.updateEnemyPathToolMenu();
