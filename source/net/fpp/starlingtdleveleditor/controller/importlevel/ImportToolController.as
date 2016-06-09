@@ -114,9 +114,9 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 
 		private function parse( source:Object, target:Object ):Object
 		{
-			for( var i:int = 0; i < this._importParserConfig.rule.length; i++ )
+			for( var i:int = 0; i < this._importParserConfig.config.length; i++ )
 			{
-				var rule:ImportParserConfigVO = this._importParserConfig.rule[ i ];
+				var rule:ImportParserConfigVO = this._importParserConfig.config[ i ];
 
 				if( getQualifiedClassName( rule.entryType ) == getQualifiedClassName( target ) )
 				{

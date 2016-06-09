@@ -100,5 +100,20 @@ package net.fpp.starlingtdleveleditor
 
 			this.dispatchEvent( new MenuEvent( MenuEvent.CHANGE_CONTROLLER, selectedButton.data as String ) );
 		}
+
+		public function selectMenuElement( elementId:String ):void
+		{
+			for( var i:int = 0; i < this._buttonContainer.numChildren; i++ )
+			{
+				var button:IconButton = this._buttonContainer.getChildAt( i ) as IconButton;
+
+				if ( button.data == elementId )
+				{
+					button.dispatchEvent( new MouseEvent( MouseEvent.CLICK ) );
+
+					return;
+				}
+			}
+		}
 	}
 }

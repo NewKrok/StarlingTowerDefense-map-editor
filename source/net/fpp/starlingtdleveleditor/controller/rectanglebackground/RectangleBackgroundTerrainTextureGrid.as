@@ -19,7 +19,7 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 
 		public function RectangleBackgroundTerrainTextureGrid()
 		{
-			this._elementContainer = new UIGrid( 3, new SimplePoint( 32, 32 ) );
+			this._elementContainer = new UIGrid( 4, new SimplePoint( 32, 32 ) );
 			this._elementContainer.gap = 5;
 
 			this.addChild( this._elementContainer );

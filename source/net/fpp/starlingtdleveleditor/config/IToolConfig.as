@@ -5,6 +5,6 @@ package net.fpp.starlingtdleveleditor.config
 {
 	public interface IToolConfig
 	{
-		function get rule():Object;
+		function get config():Object;
 	}
 }

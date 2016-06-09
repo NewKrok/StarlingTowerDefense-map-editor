@@ -1,5 +1,6 @@
 ﻿package
 {
+	import assets.GameAssets;
 	import assets.TerrainTextures;
 
 	import flash.display.Sprite;
@@ -11,8 +12,8 @@
 	import net.fpp.common.static.FPPContextMenu;
 	import net.fpp.starlingtdleveleditor.EditorWorld;
 	import net.fpp.starlingtdleveleditor.Menu;
-	import net.fpp.starlingtdleveleditor.config.IToolConfig;
 	import net.fpp.starlingtdleveleditor.config.ToolConfig;
+	import net.fpp.starlingtdleveleditor.constant.CToolId;
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
 	import net.fpp.starlingtdleveleditor.events.MenuEvent;
 	import net.fpp.starlingtdleveleditor.config.vo.ToolConfigVO;
@@ -30,6 +31,7 @@
 
 			StaticBitmapAssetManager.scaleFactor = 2;
 			StaticBitmapAssetManager.instance.loadFromJSONAtlas( TerrainTextures.AtlasImage, TerrainTextures.AtlasDescription );
+			StaticBitmapAssetManager.instance.loadFromStarlingAtlas( GameAssets.game_atlas, GameAssets.game_atlas_xml );
 
 			this.addEventListener( Event.ADDED_TO_STAGE, this.onAddedToStageHandler );
 
@@ -44,6 +46,8 @@
 			this.addChild( this._menu = new Menu );
 
 			this.createTools();
+
+			this._menu.selectMenuElement( CToolId.DRAG );
 		}
 
 		private function createTools():void

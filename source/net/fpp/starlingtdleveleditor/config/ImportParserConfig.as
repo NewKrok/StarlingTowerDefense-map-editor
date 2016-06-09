@@ -19,7 +19,7 @@ package net.fpp.starlingtdleveleditor.config
 			new ImportParserConfigVO( new Vector.<EnemyPathDataVO>, EnemyPathDataVOVectorParser )
 		];
 
-		public function get rule():Object
+		public function get config():Object
 		{
 			return this._rule;
 		}
