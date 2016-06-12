@@ -19,7 +19,6 @@ package net.fpp.starlingtdleveleditor.controller.enemypath
 			this.graphics.clear();
 
 			this.graphics.beginFill( 0xFFFFFF, .4 );
-			this.graphics.lineStyle( 1, 0xFFFFFF, .4 );
 
 			this.graphics.drawRect( -rectSize / 2, -rectSize / 2, rectSize, rectSize );
 

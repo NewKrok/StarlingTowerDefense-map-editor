@@ -5,13 +5,13 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-
-	import net.fpp.common.bitmap.StaticBitmapAssetManager;
+	import flash.events.MouseEvent;
 
 	import net.fpp.common.display.UIGrid;
 	import net.fpp.common.geom.SimplePoint;
 	import net.fpp.starlingtdleveleditor.assets.skin.CSkinAsset;
 	import net.fpp.starlingtdleveleditor.assets.skin.SkinManager;
+	import net.fpp.starlingtdleveleditor.controller.staticelement.events.StaticElementToolLibraryEvent;
 
 	public class StaticElementToolLibrary extends Sprite
 	{
@@ -30,16 +30,11 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			this._library.gap = 5;
 			this._library.isBorderEnabled = true;
 
-			this._library.addChild( StaticBitmapAssetManager.instance.getBitmap( 'crater_0' ) );
-			this._library.addChild( StaticBitmapAssetManager.instance.getBitmap( 'crater_1' ) );
-			this._library.addChild( StaticBitmapAssetManager.instance.getBitmap( 'crater_2' ) );
-			this._library.addChild( StaticBitmapAssetManager.instance.getBitmap( 'crater_3' ) );
-			this._library.addChild( StaticBitmapAssetManager.instance.getBitmap( 'crater_4' ) );
-			this._library.addChild( StaticBitmapAssetManager.instance.getBitmap( 'crater_0' ) );
-			this._library.addChild( StaticBitmapAssetManager.instance.getBitmap( 'crater_1' ) );
-			this._library.addChild( StaticBitmapAssetManager.instance.getBitmap( 'crater_2' ) );
-			this._library.addChild( StaticBitmapAssetManager.instance.getBitmap( 'crater_3' ) );
-			this._library.addChild( StaticBitmapAssetManager.instance.getBitmap( 'crater_4' ) );
+			this.addElement( 'crater_0' );
+			this.addElement( 'crater_1' );
+			this.addElement( 'crater_2' );
+			this.addElement( 'crater_3' );
+			this.addElement( 'crater_4' );
 
 			this._library.x = this._padding;
 			this._library.y = this._padding;
@@ -47,6 +42,47 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			this.addChild( this._library );
 
 			this.resize();
+		}
+
+		private function addElement( elementName:String ):void
+		{
+			var staticElementMenuItem:StaticElementMenuItem = new StaticElementMenuItem( elementName );
+
+			staticElementMenuItem.addEventListener( MouseEvent.CLICK, this.toogleElementSelection );
+
+			this._library.addChild( staticElementMenuItem );
+		}
+
+		private function toogleElementSelection( e:MouseEvent ):void
+		{
+			var staticElementMenuItem:StaticElementMenuItem = e.currentTarget as StaticElementMenuItem;
+
+			var isStaticElementMenuItemSelected:Boolean = staticElementMenuItem.isSelected;
+
+			this.deselectAllElement();
+
+			staticElementMenuItem.isSelected = !isStaticElementMenuItemSelected;
+
+			if( staticElementMenuItem.isSelected )
+			{
+				this.dispatchEvent( new StaticElementToolLibraryEvent( StaticElementToolLibraryEvent.ELEMENT_SELECTED, staticElementMenuItem.elementName ) );
+			}
+			else
+			{
+				this.dispatchEvent( new StaticElementToolLibraryEvent( StaticElementToolLibraryEvent.ELEMENT_DESELECTED ) );
+			}
+		}
+
+		public function deselectAllElement():void
+		{
+			var length:int = this._library.numChildren;
+
+			for( var i:int = 0; i < length; i++ )
+			{
+				var staticElementMenuItem:StaticElementMenuItem = this._library.getChildAt( i ) as StaticElementMenuItem;
+
+				staticElementMenuItem.isSelected = false;
+			}
 		}
 
 		public function resize():void
