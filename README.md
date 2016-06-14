@@ -3,7 +3,10 @@ Map editor for the StarlingTowerDefense game
 
 Try it online: http://flashplusplus.net/testing/steditor/starlingtowerdefense_map_editor.swf
 
-Souce of the game: https://github.com/NewKrok/StarlingTowerDefense
+## Dependencies:
+
+  * **Souce of the game** Starling Tower Defense to iphone and ipad. https://github.com/NewKrok/StarlingTowerDefense
+  * **TransformTool** The Transform Tool is an ActionScript-based component that provides visual controls for manipulating the shape and position of display objects on the screen. http://www.senocular.com/flash/tutorials/transformtool/#TransformToolClass
 
 Sample level (just import in the editor):
 
