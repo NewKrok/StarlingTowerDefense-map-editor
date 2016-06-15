@@ -3,14 +3,21 @@
  */
 package net.fpp.starlingtdleveleditor.controller.staticelement
 {
+	import com.senocular.display.transform.ControlRegistration;
+	import com.senocular.display.transform.ControlUVRotate;
+	import com.senocular.display.transform.ControlUVScale;
+
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
+	import net.fpp.common.geom.SimplePoint;
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
 	import net.fpp.starlingtdleveleditor.controller.common.events.ToolControllerEvent;
 	import net.fpp.starlingtdleveleditor.controller.staticelement.events.StaticElementToolLibraryEvent;
+	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
+	import net.fpp.starlingtowerdefense.vo.StaticElementDataVO;
 
 	public class StaticElementToolController extends AToolController
 	{
@@ -41,9 +48,15 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			this._uiContainer.stage.addEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
 
 			this._view.addEventListener( MouseEvent.MOUSE_MOVE, this.onMouseMoveHandler );
+			this._view.addEventListener( MouseEvent.MOUSE_DOWN, this.onMouseDownHandler );
 			this._view.addEventListener( MouseEvent.CLICK, this.onMouseClickHandler );
 
 			this.repositionLibrary();
+
+			for( var i:int = 0; i < this._staticElementViews.length; i++ )
+			{
+				this._staticElementViews[i].activate();
+			}
 		}
 
 		private function onElementSelectedHandler( e:StaticElementToolLibraryEvent ):void
@@ -84,11 +97,17 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			this._uiContainer.stage.removeEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
 
 			this._view.removeEventListener( MouseEvent.MOUSE_MOVE, this.onMouseMoveHandler );
+			this._view.removeEventListener( MouseEvent.MOUSE_DOWN, this.onMouseDownHandler );
 			this._view.removeEventListener( MouseEvent.CLICK, this.onMouseClickHandler );
 
 			if( this._staticElementPreview.parent )
 			{
 				this._view.removeChild( this._staticElementPreview );
+			}
+
+			for( var i:int = 0; i < this._staticElementViews.length; i++ )
+			{
+				this._staticElementViews[i].deactivate();
 			}
 		}
 
@@ -115,18 +134,42 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			this.repositionStaticElementPreview();
 		}
 
+		private function onMouseDownHandler( e:MouseEvent ):void
+		{
+			if ( 	e.target is ControlUVScale ||
+					e.target is ControlUVRotate ||
+					e.target is ControlRegistration
+			)
+			{
+				this.dispatchEvent( new ToolControllerEvent( ToolControllerEvent.MOUSE_ACTION_STARTED ) );
+			}
+		}
+
 		private function onMouseClickHandler( e:MouseEvent ):void
 		{
 			if( this._staticElementPreview.parent )
 			{
-				var staticElementView:StaticElementView = new StaticElementView( this._selectedElementName );
-				staticElementView.x = this._staticElementPreview.x;
-				staticElementView.y = this._staticElementPreview.y;
+				this.createStaticElementView( this._selectedElementName, this._staticElementPreview.x, this._staticElementPreview.y );
+			}
+		}
 
-				staticElementView.addEventListener( MouseEvent.MOUSE_DOWN, this.onStaticElementViewMouseDownHandler );
+		private function createStaticElementView( elementId:String, x:Number, y:Number, rotation:Number = 0, scaleX:Number = 1, scaleY:Number = 1 ):void
+		{
+			var staticElementView:StaticElementView = new StaticElementView( elementId );
+			staticElementView.x = x;
+			staticElementView.y = y;
+			staticElementView.rotation = rotation;
+			staticElementView.scaleX = scaleX;
+			staticElementView.scaleY = scaleY;
 
-				this._staticElementViews.push( staticElementView );
-				this._view.addChild( staticElementView );
+			staticElementView.addEventListener( MouseEvent.MOUSE_DOWN, this.onStaticElementViewMouseDownHandler );
+
+			this._staticElementViews.push( staticElementView );
+			this._view.addChild( staticElementView );
+
+			if ( !this._isActivated )
+			{
+				staticElementView.deactivate();
 			}
 		}
 
@@ -159,6 +202,50 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 		{
 			this._staticElementToolLibrary.x = 5;
 			this._staticElementToolLibrary.y = this._uiContainer.stage.stageHeight - this._staticElementToolLibrary.height - 5;
+		}
+
+		override public function setLevelDataVO( levelDataVO:LevelDataVO ):void
+		{
+			if( !levelDataVO.staticElementData )
+			{
+				return
+			}
+
+			for( var i:int = 0; i < levelDataVO.staticElementData.length; i++ )
+			{
+				var staticElementData:StaticElementDataVO = levelDataVO.staticElementData[ i ];
+
+				this.createStaticElementView(
+						staticElementData.elementId,
+						staticElementData.position.x,
+						staticElementData.position.y,
+						staticElementData.rotation,
+						staticElementData.scaleX,
+						staticElementData.scaleY
+				);
+			}
+		}
+
+		override public function getLevelDataVO():LevelDataVO
+		{
+			var levelDataVO:LevelDataVO = new LevelDataVO();
+
+			var staticElementData:Vector.<StaticElementDataVO> = new <StaticElementDataVO>[];
+
+			for( var i:int = 0; i < this._staticElementViews.length; i++ )
+			{
+				staticElementData.push( new StaticElementDataVO(
+						this._staticElementViews[i].elementId,
+						new SimplePoint( this._staticElementViews[i].x, this._staticElementViews[i].y ),
+						this._staticElementViews[i].rotation,
+						this._staticElementViews[i].scaleX,
+						this._staticElementViews[i].scaleY
+				) );
+			}
+
+			levelDataVO.staticElementData = staticElementData;
+
+			return levelDataVO;
 		}
 	}
 }
