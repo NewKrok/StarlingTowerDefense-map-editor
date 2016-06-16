@@ -56,7 +56,7 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 			this._view.addEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
 			this._view.stage.addEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
 
-			this._view.addEventListener( MouseEvent.MOUSE_DOWN, this.onRecangleMouseDown );
+			this._view.addEventListener( MouseEvent.MOUSE_DOWN, this.onRectangleMouseDown );
 		}
 
 		override public function deactivate():void
@@ -70,7 +70,7 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 			this._view.removeEventListener( MouseEvent.MOUSE_MOVE, this.onRouteMouseMove );
 			this._view.stage.removeEventListener( MouseEvent.MOUSE_UP, this.onStageMouseUpHandler );
 
-			this._view.removeEventListener( MouseEvent.MOUSE_DOWN, this.onRecangleMouseDown );
+			this._view.removeEventListener( MouseEvent.MOUSE_DOWN, this.onRectangleMouseDown );
 		}
 
 		private function showNodePoints():void
@@ -165,7 +165,7 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 			}
 		}
 
-		protected function onRecangleMouseDown( e:MouseEvent ):void
+		protected function onRectangleMouseDown( e:MouseEvent ):void
 		{
 			if( e.target is RectangleNodeView )
 			{
@@ -301,12 +301,12 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 			this._rectangleViewContainer.addChild( rectangleView );
 			this._rectangleViews.push( rectangleView );
 
-			rectangleView.addEventListener( MouseEvent.CLICK, onPolygonClickHandler );
+			rectangleView.addEventListener( MouseEvent.CLICK, onRectangleClickHandler );
 
 			this.addRectangleNodeViews( rectangleView.rectangleNodeViews, rectangleView.nodeContainer, polygon );
 		}
 
-		private function onPolygonClickHandler( e:MouseEvent ):void
+		private function onRectangleClickHandler( e:MouseEvent ):void
 		{
 			if( !this._isActivated || e.target is RectangleNodeView )
 			{
@@ -492,7 +492,7 @@ package net.fpp.starlingtdleveleditor.controller.rectanglebackground
 		{
 			var rectangleView:RectangleView = this._rectangleViews[ this._lastSelectedRectangleIndex ];
 			rectangleView.dispose();
-			rectangleView.removeEventListener( MouseEvent.CLICK, onPolygonClickHandler );
+			rectangleView.removeEventListener( MouseEvent.CLICK, onRectangleClickHandler );
 
 			this._rectangleViewContainer.removeChild( rectangleView );
 			this._rectangleViews.splice( this._lastSelectedRectangleIndex, 1 );

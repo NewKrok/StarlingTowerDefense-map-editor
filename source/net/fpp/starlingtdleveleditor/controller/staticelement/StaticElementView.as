@@ -10,6 +10,7 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.filters.GlowFilter;
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
 
@@ -36,7 +37,7 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			_controlSetStandard.push( new ControlReset() );
 			_controlSetStandard.push( new ControlBoundingBox() );
 
-			this._transformTool = new TransformTool( _controlSetStandard );
+			this._transformTool = new TransformTool( _controlSetStandard as Array );
 			this.parent.addChild( this._transformTool );
 			this._transformTool.target = this;
 
@@ -51,6 +52,16 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 		public function deactivate():void
 		{
 			this._transformTool.visible = false;
+		}
+
+		public function mark():void
+		{
+			this.filters = [ new GlowFilter( 0xFFFFFF, 1, 5, 5, 100 ) ];
+		}
+
+		public function unmark():void
+		{
+			this.filters = [];
 		}
 
 		public function get elementId():String
@@ -81,6 +92,12 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 		override public function set rotation( value:Number ):void
 		{
 			super.rotation = Math.floor( value * 100 ) / 100;
+		}
+
+		public function dispose():void
+		{
+			this._transformTool.parent.removeChild( _transformTool );
+			this._transformTool = null;
 		}
 	}
 }
