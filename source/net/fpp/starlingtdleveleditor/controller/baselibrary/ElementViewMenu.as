@@ -1,19 +1,21 @@
 /**
  * Created by newkrok on 22/05/16.
  */
-package net.fpp.starlingtdleveleditor.controller.staticelement
+package net.fpp.starlingtdleveleditor.controller.baselibrary
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 
+	import net.fpp.common.display.HUIBox;
+
 	import net.fpp.common.display.UIBox;
 	import net.fpp.starlingtdleveleditor.assets.skin.CSkinAsset;
 	import net.fpp.starlingtdleveleditor.assets.skin.SkinManager;
 	import net.fpp.starlingtdleveleditor.component.Button;
-	import net.fpp.starlingtdleveleditor.controller.staticelement.events.StaticElementToolMenuEvent;
+	import net.fpp.starlingtdleveleditor.controller.baselibrary.events.BaseLibraryToolMenuEvent;
 
-	public class StaticElementToolMenu extends Sprite
+	public class ElementViewMenu extends Sprite
 	{
 		private var _background:DisplayObject;
 		private var _container:UIBox;
@@ -23,7 +25,7 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 		private var _sendBackwardButton:Button;
 		private var _closeButton:Button;
 
-		public function StaticElementToolMenu()
+		public function ElementViewMenu()
 		{
 			this._background = SkinManager.getSkin( CSkinAsset.TRANSPARENT_BACKGROUND );
 			this.addChild( this._background );
@@ -32,19 +34,20 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			this._container.gap = 5;
 			this.addChild( this._container );
 
-			var arrangeButtonContainer:Sprite = new Sprite();
+			var arrangeButtonContainer:HUIBox = new HUIBox();
+			arrangeButtonContainer.gap = 5;
 			this._container.addChild( arrangeButtonContainer );
 
 			arrangeButtonContainer.addChild( this.createBringForwardButton() );
 			arrangeButtonContainer.addChild( this.createSendBackwardButton() );
 
-			this.createCloseButton();
-			this.createDeleteButton();
-
-			var arrangeButtonContainerGap:Number = 5;
 			this._bringForwardButton.width = 75;
 			this._sendBackwardButton.width = 75;
-			this._sendBackwardButton.x = this._bringForwardButton.width + arrangeButtonContainerGap;
+
+			arrangeButtonContainer.draw();
+
+			this.createCloseButton();
+			this.createDeleteButton();
 
 			this._closeButton.width = this.width;
 			this._deleteButton.width = this.width;
@@ -135,28 +138,28 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 
 		private function onSendBackwardRequest( e:MouseEvent ):void
 		{
-			this.dispatchEvent( new StaticElementToolMenuEvent( StaticElementToolMenuEvent.SEND_BACKWARD ) );
+			this.dispatchEvent( new BaseLibraryToolMenuEvent( BaseLibraryToolMenuEvent.SEND_BACKWARD ) );
 
 			e.stopPropagation();
 		}
 
 		private function onBringForwardRequest( e:MouseEvent ):void
 		{
-			this.dispatchEvent( new StaticElementToolMenuEvent( StaticElementToolMenuEvent.BRING_FORWARD ) );
+			this.dispatchEvent( new BaseLibraryToolMenuEvent( BaseLibraryToolMenuEvent.BRING_FORWARD ) );
 
 			e.stopPropagation();
 		}
 
 		private function onCloseRequest( e:MouseEvent ):void
 		{
-			this.dispatchEvent( new StaticElementToolMenuEvent( StaticElementToolMenuEvent.CLOSE_REQUEST ) );
+			this.dispatchEvent( new BaseLibraryToolMenuEvent( BaseLibraryToolMenuEvent.CLOSE_REQUEST ) );
 
 			e.stopPropagation();
 		}
 
 		private function onDeleteRequest( e:MouseEvent ):void
 		{
-			this.dispatchEvent( new StaticElementToolMenuEvent( StaticElementToolMenuEvent.DELETE_REQUEST ) );
+			this.dispatchEvent( new BaseLibraryToolMenuEvent( BaseLibraryToolMenuEvent.DELETE_REQUEST ) );
 
 			e.stopPropagation();
 		}

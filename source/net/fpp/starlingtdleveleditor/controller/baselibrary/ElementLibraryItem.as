@@ -1,19 +1,19 @@
 /**
  * Created by newkrok on 12/06/16.
  */
-package net.fpp.starlingtdleveleditor.controller.staticelement
+package net.fpp.starlingtdleveleditor.controller.baselibrary
 {
 	import flash.display.Sprite;
 	import flash.filters.GlowFilter;
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
 
-	public class StaticElementMenuItem extends Sprite
+	public class ElementLibraryItem extends Sprite
 	{
 		private var _isSelected:Boolean;
 		private var _elementName:String;
 
-		public function StaticElementMenuItem( elementName:String )
+		public function ElementLibraryItem( elementName:String )
 		{
 			this._elementName = elementName;
 

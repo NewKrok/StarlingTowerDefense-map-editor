@@ -1,7 +1,7 @@
 /**
  * Created by newkrok on 09/06/16.
  */
-package net.fpp.starlingtdleveleditor.controller.staticelement
+package net.fpp.starlingtdleveleditor.controller.baselibrary
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -11,9 +11,9 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 	import net.fpp.common.geom.SimplePoint;
 	import net.fpp.starlingtdleveleditor.assets.skin.CSkinAsset;
 	import net.fpp.starlingtdleveleditor.assets.skin.SkinManager;
-	import net.fpp.starlingtdleveleditor.controller.staticelement.events.StaticElementToolLibraryEvent;
+	import net.fpp.starlingtdleveleditor.controller.baselibrary.events.BaseLibraryEvent;
 
-	public class StaticElementToolLibrary extends Sprite
+	public class ElementLibrary extends Sprite
 	{
 		private const _padding:Number = 5;
 
@@ -21,7 +21,7 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 
 		private var _background:DisplayObject;
 
-		public function StaticElementToolLibrary()
+		public function ElementLibrary( elementList:Vector.<String> )
 		{
 			this._background = SkinManager.getSkin( CSkinAsset.TRANSPARENT_BACKGROUND );
 			this.addChild( this._background );
@@ -29,12 +29,12 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			this._library = new UIGrid( 4, new SimplePoint( 75, 75 ) );
 			this._library.gap = 5;
 			this._library.isBorderEnabled = true;
+			this._library.childAutoScale = true;
 
-			this.addElement( 'crater_0' );
-			this.addElement( 'crater_1' );
-			this.addElement( 'crater_2' );
-			this.addElement( 'crater_3' );
-			this.addElement( 'crater_4' );
+			for ( var i:int = 0; i < elementList.length; i++ )
+			{
+				this.addElement( elementList[i] );
+			}
 
 			this._library.x = this._padding;
 			this._library.y = this._padding;
@@ -46,30 +46,30 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 
 		private function addElement( elementName:String ):void
 		{
-			var staticElementMenuItem:StaticElementMenuItem = new StaticElementMenuItem( elementName );
+			var elementLibraryItem:ElementLibraryItem = new ElementLibraryItem( elementName );
 
-			staticElementMenuItem.addEventListener( MouseEvent.CLICK, this.toogleElementSelection );
+			elementLibraryItem.addEventListener( MouseEvent.CLICK, this.toogleElementSelection );
 
-			this._library.addChild( staticElementMenuItem );
+			this._library.addChild( elementLibraryItem );
 		}
 
 		private function toogleElementSelection( e:MouseEvent ):void
 		{
-			var staticElementMenuItem:StaticElementMenuItem = e.currentTarget as StaticElementMenuItem;
+			var elementLibraryItem:ElementLibraryItem = e.currentTarget as ElementLibraryItem;
 
-			var isStaticElementMenuItemSelected:Boolean = staticElementMenuItem.isSelected;
+			var isElementLibraryItemSelected:Boolean = elementLibraryItem.isSelected;
 
 			this.deselectAllElement();
 
-			staticElementMenuItem.isSelected = !isStaticElementMenuItemSelected;
+			elementLibraryItem.isSelected = !isElementLibraryItemSelected;
 
-			if( staticElementMenuItem.isSelected )
+			if( elementLibraryItem.isSelected )
 			{
-				this.dispatchEvent( new StaticElementToolLibraryEvent( StaticElementToolLibraryEvent.ELEMENT_SELECTED, staticElementMenuItem.elementName ) );
+				this.dispatchEvent( new BaseLibraryEvent( BaseLibraryEvent.ELEMENT_SELECTED, elementLibraryItem.elementName ) );
 			}
 			else
 			{
-				this.dispatchEvent( new StaticElementToolLibraryEvent( StaticElementToolLibraryEvent.ELEMENT_DESELECTED ) );
+				this.dispatchEvent( new BaseLibraryEvent( BaseLibraryEvent.ELEMENT_DESELECTED ) );
 			}
 		}
 
@@ -79,9 +79,9 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 
 			for( var i:int = 0; i < length; i++ )
 			{
-				var staticElementMenuItem:StaticElementMenuItem = this._library.getChildAt( i ) as StaticElementMenuItem;
+				var elementLibraryItem:ElementLibraryItem = this._library.getChildAt( i ) as ElementLibraryItem;
 
-				staticElementMenuItem.isSelected = false;
+				elementLibraryItem.isSelected = false;
 			}
 		}
 
