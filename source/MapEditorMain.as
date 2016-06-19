@@ -64,7 +64,6 @@
 				var toolController:AToolController = new config.toolControllerClass();
 				toolController.id = config.id;
 				toolController.isSelectable = config.isSelectable;
-				toolController.toolConfig = config.toolConfig;
 
 				this._editorMain.registerToolController( config.id, toolController );
 			}

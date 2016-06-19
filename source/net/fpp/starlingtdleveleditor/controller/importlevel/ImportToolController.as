@@ -7,10 +7,10 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 	import flash.events.MouseEvent;
 	import flash.utils.getQualifiedClassName;
 
-	import net.fpp.starlingtdleveleditor.config.ImportParserConfig;
-	import net.fpp.starlingtdleveleditor.config.vo.ImportParserConfigVO;
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
-	import net.fpp.starlingtdleveleditor.parser.IParser;
+	import net.fpp.starlingtowerdefense.config.ImportParserConfig;
+	import net.fpp.starlingtowerdefense.config.vo.ImportParserConfigVO;
+	import net.fpp.starlingtowerdefense.parser.IParser;
 	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
 
 	public class ImportToolController extends AToolController
@@ -24,7 +24,7 @@ package net.fpp.starlingtdleveleditor.controller.importlevel
 
 		override protected function uiContainerInited():void
 		{
-			this._importParserConfig = this.toolConfig as ImportParserConfig;
+			this._importParserConfig = new ImportParserConfig();
 
 			this.build();
 			this.hide();

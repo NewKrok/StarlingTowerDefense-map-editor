@@ -4,7 +4,6 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	import flash.geom.Point;
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
 	import net.fpp.common.geom.SimplePoint;
@@ -13,7 +12,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 	import net.fpp.starlingtdleveleditor.controller.polygonbackground.events.PolygonBackgroundToolMenuEvent;
 	import net.fpp.starlingtowerdefense.game.config.terraintexture.PolygonBackgroundTerrainTextureConfig;
 	import net.fpp.starlingtowerdefense.game.module.background.polygonbackground.vo.PolygonBackgroundTerrainTextureVO;
-	import net.fpp.starlingtowerdefense.utils.BrushPattern;
+	import net.fpp.starlingtowerdefense.util.BrushPattern;
 	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
 	import net.fpp.starlingtowerdefense.vo.PolygonBackgroundVO;
 
@@ -98,7 +97,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			{
 				for( var i:int = 0; i < this._polygonViews.length; i++ )
 				{
-					if ( this._draggedPolygonView == this._polygonViews[ i ] )
+					if( this._draggedPolygonView == this._polygonViews[ i ] )
 					{
 						for( var j:int = 0; j < this._polygonViews[ i ].polygonNodeViews.length; j++ )
 						{
@@ -169,7 +168,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		private function isPolygonToolMenuClicked( e:MouseEvent ):Boolean
 		{
-			if ( !this._polygonBackgroundToolMenu.parent )
+			if( !this._polygonBackgroundToolMenu.parent )
 			{
 				return false;
 			}
@@ -394,7 +393,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 		{
 			for( var i:int = 0; i < this._polygonViews.length; i++ )
 			{
-				var points:Vector.<Point> = new <Point>[];
+				var points:Vector.<SimplePoint> = new <SimplePoint>[];
 
 				this._polygonViews[ i ].graphics.clear();
 				this._polygonViews[ i ].graphics.lineStyle( 1 );
@@ -402,18 +401,18 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 				var polygon:Vector.<PolygonNodeView> = this._polygonViews[ i ].polygonNodeViews;
 				this._polygonViews[ i ].graphics.moveTo( polygon[ 0 ].x, polygon[ 0 ].y );
-				points.push( new Point( polygon[ 0 ].x / 2, polygon[ 0 ].y / 2 ) );
+				points.push( new SimplePoint( polygon[ 0 ].x / 2, polygon[ 0 ].y / 2 ) );
 
 				for( var j:int = 1; j < polygon.length; j++ )
 				{
 					this._polygonViews[ i ].graphics.lineTo( polygon[ j ].x, polygon[ j ].y );
-					points.push( new Point( polygon[ j - 1 ].x / 2, polygon[ j - 1 ].y / 2 ) );
-					points.push( new Point( polygon[ j ].x / 2, polygon[ j ].y / 2 ) );
+					points.push( new SimplePoint( polygon[ j - 1 ].x / 2, polygon[ j - 1 ].y / 2 ) );
+					points.push( new SimplePoint( polygon[ j ].x / 2, polygon[ j ].y / 2 ) );
 				}
 
 				this._polygonViews[ i ].graphics.lineTo( polygon[ 0 ].x, polygon[ 0 ].y );
-				points.push( new Point( polygon[ j - 1 ].x / 2, polygon[ j - 1 ].y / 2 ) );
-				points.push( new Point( polygon[ 0 ].x / 2, polygon[ 0 ].y / 2 ) );
+				points.push( new SimplePoint( polygon[ j - 1 ].x / 2, polygon[ j - 1 ].y / 2 ) );
+				points.push( new SimplePoint( polygon[ 0 ].x / 2, polygon[ 0 ].y / 2 ) );
 
 				this._polygonViews[ i ].graphics.endFill();
 
@@ -426,7 +425,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 			}
 		}
 
-		private function createIngameGraphics( points:Vector.<Point>, terrainTextureVO:PolygonBackgroundTerrainTextureVO ):DisplayObject
+		private function createIngameGraphics( points:Vector.<SimplePoint>, terrainTextureVO:PolygonBackgroundTerrainTextureVO ):DisplayObject
 		{
 			var ingameGraphics:Sprite = new BrushPattern(
 					points,
@@ -533,7 +532,7 @@ package net.fpp.starlingtdleveleditor.controller.polygonbackground
 
 		override public function setLevelDataVO( levelDataVO:LevelDataVO ):void
 		{
-			if ( !levelDataVO.polygonBackgroundData )
+			if( !levelDataVO.polygonBackgroundData )
 			{
 				return;
 			}

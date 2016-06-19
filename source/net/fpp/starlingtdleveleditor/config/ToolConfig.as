@@ -27,8 +27,7 @@ package net.fpp.starlingtdleveleditor.config
 									'Import',
 									'ImportButtonIcon',
 									ImportToolController,
-									CToolType.IS_NOT_SELECTABLE,
-									new ImportParserConfig()
+									CToolType.IS_NOT_SELECTABLE
 							),
 
 							new ToolConfigVO

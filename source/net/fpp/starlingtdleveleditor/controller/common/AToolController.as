@@ -8,8 +8,6 @@ package net.fpp.starlingtdleveleditor.controller.common
 	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 
-	import net.fpp.starlingtdleveleditor.config.IToolConfig;
-
 	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
 
 	public class AToolController extends EventDispatcher
@@ -24,7 +22,6 @@ package net.fpp.starlingtdleveleditor.controller.common
 
 		public var id:String;
 		public var isSelectable:Boolean;
-		public var toolConfig:IToolConfig;
 
 		protected var _isActivated:Boolean;
 
