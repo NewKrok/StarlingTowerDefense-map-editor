@@ -14,6 +14,7 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 
 	import net.fpp.common.bitmap.StaticBitmapAssetManager;
 	import net.fpp.common.geom.SimplePoint;
+	import net.fpp.common.util.GeomUtil;
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
 	import net.fpp.starlingtdleveleditor.controller.common.events.ToolControllerEvent;
 	import net.fpp.starlingtdleveleditor.controller.staticelement.events.StaticElementToolLibraryEvent;
@@ -32,6 +33,7 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 		private var _selectedStaticElementView:StaticElementView;
 		private var _staticElementToolMenu:StaticElementToolMenu;
 		private var _lastSelectedStaticElementIndex:int = 0;
+		private var _dragStartPoint:SimplePoint = new SimplePoint();
 
 		public function StaticElementToolController()
 		{
@@ -139,7 +141,6 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			if( this._draggedStaticElementView && !this._staticElementToolMenu.parent )
 			{
 				this._draggedStaticElementView.stopDrag();
-
 				this._draggedStaticElementView = null;
 			}
 
@@ -243,6 +244,8 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 
 		private function onStaticElementViewMouseDownHandler( e:MouseEvent ):void
 		{
+			this.dispatchEvent( new ToolControllerEvent( ToolControllerEvent.MOUSE_ACTION_STARTED ) );
+
 			this.closeStaticElementToolMenu();
 
 			if( this._selectedStaticElementView )
@@ -253,14 +256,14 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			this._draggedStaticElementView = e.currentTarget as StaticElementView;
 			this._draggedStaticElementView.startDrag();
 
+			this._dragStartPoint.setTo( this._view.mouseX, this._view.mouseY );
+
 			this._staticElementToolLibrary.deselectAllElement();
 
 			if( this._staticElementPreview.parent )
 			{
 				this._view.removeChild( this._staticElementPreview );
 			}
-
-			this.dispatchEvent( new ToolControllerEvent( ToolControllerEvent.MOUSE_ACTION_STARTED ) );
 		}
 
 		private function onStaticElementViewClickHandler( e:MouseEvent ):void
@@ -270,8 +273,15 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 				this._selectedStaticElementView.unmark();
 			}
 
+			if ( GeomUtil.simplePointDistance( this._dragStartPoint, new SimplePoint( this._view.mouseX, this._view.mouseY ) ) > 5 )
+			{
+				return;
+			}
+trace(e.currentTarget)
 			this._selectedStaticElementView = e.currentTarget as StaticElementView;
 			this._selectedStaticElementView.mark();
+
+			this._lastSelectedStaticElementIndex = this._staticElementContainer.getChildIndex( this._selectedStaticElementView );
 
 			this.openStaticElementToolMenu();
 		}
@@ -310,9 +320,9 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 
 		private function onBringForwardStaticElementRequestHandler( e:StaticElementToolMenuEvent ):void
 		{
-			if( this._lastSelectedStaticElementIndex < this._view.numChildren - 1 )
+			if( this._lastSelectedStaticElementIndex < this._staticElementContainer.numChildren - 1 )
 			{
-				this._view.swapChildrenAt( this._lastSelectedStaticElementIndex, this._lastSelectedStaticElementIndex + 1 );
+				this._staticElementContainer.swapChildrenAt( this._lastSelectedStaticElementIndex, this._lastSelectedStaticElementIndex + 1 );
 
 				var savedStaticElementView:StaticElementView = this._staticElementViews[ this._lastSelectedStaticElementIndex ];
 				this._staticElementViews[ this._lastSelectedStaticElementIndex ] = this._staticElementViews[ this._lastSelectedStaticElementIndex + 1 ];
@@ -326,7 +336,7 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 		{
 			if( this._lastSelectedStaticElementIndex > 0 )
 			{
-				this._view.swapChildrenAt( this._lastSelectedStaticElementIndex, this._lastSelectedStaticElementIndex - 1 );
+				this._staticElementContainer.swapChildrenAt( this._lastSelectedStaticElementIndex, this._lastSelectedStaticElementIndex - 1 );
 
 				var savedStaticElementView:StaticElementView = this._staticElementViews[ this._lastSelectedStaticElementIndex ];
 				this._staticElementViews[ this._lastSelectedStaticElementIndex ] = this._staticElementViews[ this._lastSelectedStaticElementIndex - 1 ];
@@ -350,6 +360,8 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			this._staticElementContainer.removeChild( savedStaticElementView );
 			this._staticElementViews.splice( this._lastSelectedStaticElementIndex, 1 );
 
+			savedStaticElementView = null;
+
 			this.closeStaticElementToolMenu();
 		}
 
@@ -372,7 +384,7 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 		{
 			if( !levelDataVO.staticElementData )
 			{
-				return
+				return;
 			}
 
 			for( var i:int = 0; i < levelDataVO.staticElementData.length; i++ )

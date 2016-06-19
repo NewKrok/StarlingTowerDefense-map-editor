@@ -38,7 +38,7 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 			_controlSetStandard.push( new ControlBoundingBox() );
 
 			this._transformTool = new TransformTool( _controlSetStandard as Array );
-			this.parent.addChild( this._transformTool );
+			this.parent.parent.addChild( this._transformTool );
 			this._transformTool.target = this;
 
 			this.buttonMode = true;
