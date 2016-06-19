@@ -20,7 +20,7 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
 	import net.fpp.starlingtdleveleditor.controller.common.events.ToolControllerEvent;
 	import net.fpp.starlingtowerdefense.vo.LevelDataVO;
-	import net.fpp.starlingtowerdefense.vo.StaticElementDataVO;
+	import net.fpp.starlingtowerdefense.vo.LibraryElementDataVO;
 
 	public class BaseLibraryToolController extends AToolController
 	{
@@ -34,6 +34,7 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 		private var _staticElementToolMenu:ElementViewMenu;
 		private var _lastSelectedStaticElementIndex:int = 0;
 		private var _dragStartPoint:SimplePoint = new SimplePoint();
+		private var _levelDataId:String;
 
 		public function BaseLibraryToolController()
 		{
@@ -60,7 +61,7 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 		{
 			super.activate();
 
-			if ( this._staticElementToolLibrary )
+			if( this._staticElementToolLibrary )
 			{
 				this._uiContainer.addChild( this._staticElementToolLibrary );
 				this._staticElementToolLibrary.addEventListener( BaseLibraryEvent.ELEMENT_SELECTED, this.onElementSelectedHandler );
@@ -216,7 +217,7 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 
 		private function isStaticElementToolLibraryClicked( e:MouseEvent ):Boolean
 		{
-			if ( !this._staticElementToolLibrary )
+			if( !this._staticElementToolLibrary )
 			{
 				return false;
 			}
@@ -390,31 +391,36 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 
 		private function repositionLibrary():void
 		{
-			if ( this._staticElementToolLibrary )
+			if( this._staticElementToolLibrary )
 			{
 				this._staticElementToolLibrary.x = 5;
 				this._staticElementToolLibrary.y = this._uiContainer.stage.stageHeight - this._staticElementToolLibrary.height - 5;
 			}
 		}
 
+		public function setLevelDataId( value:String ):void
+		{
+			this._levelDataId = value;
+		}
+
 		override public function setLevelDataVO( levelDataVO:LevelDataVO ):void
 		{
-			if( !levelDataVO.staticElementData )
+			if( !levelDataVO[ this._levelDataId ] )
 			{
 				return;
 			}
 
-			for( var i:int = 0; i < levelDataVO.staticElementData.length; i++ )
+			for( var i:int = 0; i < levelDataVO[ this._levelDataId ].length; i++ )
 			{
-				var staticElementData:StaticElementDataVO = levelDataVO.staticElementData[ i ];
+				var libraryElementData:LibraryElementDataVO = levelDataVO[ this._levelDataId ][ i ];
 
 				this.createStaticElementView(
-						staticElementData.elementId,
-						staticElementData.position.x,
-						staticElementData.position.y,
-						staticElementData.rotation,
-						staticElementData.scaleX,
-						staticElementData.scaleY
+						libraryElementData.elementId,
+						libraryElementData.position.x,
+						libraryElementData.position.y,
+						libraryElementData.rotation,
+						libraryElementData.scaleX,
+						libraryElementData.scaleY
 				);
 			}
 		}
@@ -423,11 +429,11 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 		{
 			var levelDataVO:LevelDataVO = new LevelDataVO();
 
-			var staticElementData:Vector.<StaticElementDataVO> = new <StaticElementDataVO>[];
+			var libraryElementData:Vector.<LibraryElementDataVO> = new <LibraryElementDataVO>[];
 
 			for( var i:int = 0; i < this._staticElementViews.length; i++ )
 			{
-				staticElementData.push( new StaticElementDataVO(
+				libraryElementData.push( new LibraryElementDataVO(
 						this._staticElementViews[ i ].elementId,
 						new SimplePoint( this._staticElementViews[ i ].x, this._staticElementViews[ i ].y ),
 						this._staticElementViews[ i ].rotation,
@@ -436,7 +442,7 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 				) );
 			}
 
-			levelDataVO.staticElementData = staticElementData;
+			levelDataVO[ this._levelDataId ] = libraryElementData;
 
 			return levelDataVO;
 		}

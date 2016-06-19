@@ -20,6 +20,8 @@ package net.fpp.starlingtdleveleditor.controller.staticelement
 					'crater_4'
 				]
 			);
+
+			this.setLevelDataId( 'staticElementData' );
 		}
 	}
 }

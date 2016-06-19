@@ -18,6 +18,8 @@ package net.fpp.starlingtdleveleditor.controller.dynamicelement
 						'building'
 					]
 			);
+
+			this.setLevelDataId( 'dynamicElementData' );
 		}
 	}
 }
