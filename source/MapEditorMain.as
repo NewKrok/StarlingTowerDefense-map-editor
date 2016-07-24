@@ -2,6 +2,7 @@
 {
 	import assets.GameAssets;
 	import assets.TerrainTextures;
+	import assets.UnitAssets;
 
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
@@ -13,10 +14,10 @@
 	import net.fpp.starlingtdleveleditor.EditorWorld;
 	import net.fpp.starlingtdleveleditor.Menu;
 	import net.fpp.starlingtdleveleditor.config.ToolConfig;
+	import net.fpp.starlingtdleveleditor.config.vo.ToolConfigVO;
 	import net.fpp.starlingtdleveleditor.constant.CToolId;
 	import net.fpp.starlingtdleveleditor.controller.common.AToolController;
 	import net.fpp.starlingtdleveleditor.events.MenuEvent;
-	import net.fpp.starlingtdleveleditor.config.vo.ToolConfigVO;
 
 	public class MapEditorMain extends Sprite
 	{

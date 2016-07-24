@@ -14,6 +14,7 @@ package net.fpp.starlingtdleveleditor.constant
 		public static const RECTANGLE_BACKGROUND:String = 'CToolId.RECTANGLE_BACKGROUND';
 		public static const STATIC_ELEMENT:String = 'CToolId.STATIC_ELEMENT';
 		public static const DYNAMIC_ELEMENT:String = 'CToolId.DYNAMIC_ELEMENT';
+		public static const UNITS:String = 'CToolId.UNITS';
 		public static const ENEMY_PATH:String = 'CToolId.ENEMY_PATH';
 	}
 }

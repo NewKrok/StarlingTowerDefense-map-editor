@@ -14,6 +14,7 @@ package net.fpp.starlingtdleveleditor.config
 	import net.fpp.starlingtdleveleditor.controller.polygonbackground.PolygonBackgroundToolController;
 	import net.fpp.starlingtdleveleditor.controller.rectanglebackground.RectangleBackgroundToolController;
 	import net.fpp.starlingtdleveleditor.controller.staticelement.StaticElementToolController;
+	import net.fpp.starlingtdleveleditor.controller.units.UnitsToolController;
 	import net.fpp.starlingtdleveleditor.controller.zoomin.ZoomInToolController;
 	import net.fpp.starlingtdleveleditor.controller.zoomout.ZoomOutToolController;
 
@@ -99,6 +100,15 @@ package net.fpp.starlingtdleveleditor.config
 									'Dynamic Element',
 									'DynamicElementButtonIcon',
 									DynamicElementToolController,
+									CToolType.IS_SELECTABLE
+							),
+
+							new ToolConfigVO
+							(
+									CToolId.UNITS,
+									'Units',
+									'UnitsButtonIcon',
+									UnitsToolController,
 									CToolType.IS_SELECTABLE
 							),
 

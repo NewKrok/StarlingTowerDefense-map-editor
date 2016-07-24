@@ -35,6 +35,7 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 		private var _lastSelectedStaticElementIndex:int = 0;
 		private var _dragStartPoint:SimplePoint = new SimplePoint();
 		private var _levelDataId:String;
+		protected var _isTransformToolEnabled:Boolean = true;
 
 		public function BaseLibraryToolController()
 		{
@@ -202,6 +203,7 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 			staticElementView.rotation = rotation;
 			staticElementView.scaleX = scaleX;
 			staticElementView.scaleY = scaleY;
+			staticElementView.isTransformToolEnabled = this._isTransformToolEnabled;
 
 			staticElementView.addEventListener( MouseEvent.MOUSE_DOWN, this.onStaticElementViewMouseDownHandler );
 			staticElementView.addEventListener( MouseEvent.CLICK, this.onStaticElementViewClickHandler );

@@ -2,3 +2,5 @@ img source/
 .idea/
 *.iml
 source/*.swf
+
+source/out

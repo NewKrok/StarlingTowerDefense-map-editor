@@ -22,6 +22,7 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 		private var _elementId:String;
 
 		private var _transformTool:TransformTool;
+		public var isTransformToolEnabled:Boolean;
 
 		public function ElementView( elementId:String )
 		{
@@ -45,7 +46,12 @@ package net.fpp.starlingtdleveleditor.controller.baselibrary
 
 			this._transformTool = new TransformTool( _controlSetStandard as Array, registrationManager );
 			this._transformTool.alpha = .2;
-			this.parent.parent.addChild( this._transformTool );
+
+			if ( this.isTransformToolEnabled )
+			{
+				this.parent.parent.addChild( this._transformTool );
+			}
+
 			this._transformTool.target = this;
 
 			this.addEventListener( MouseEvent.MOUSE_OVER, this.onMouseUp );
